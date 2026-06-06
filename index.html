@@ -139,7 +139,7 @@ body.locked .mobile-toggle{display:none}
       <h2 id="diff">2 · อะไรเปลี่ยนไป (diff จากของเดิม)</h2>
       <div class="diff-grid">
         <div class="diff-card"><h4>① ตัด checksum</h4>รหัส CRS เหลือ <strong>7 ช่อง</strong><div class="from-to"><span class="old">8 ช่อง</span> → <span class="new">7 ช่อง</span></div></div>
-        <div class="diff-card"><h4>② INI/OPT = แพกเกจ/ซับ</h4>ช่อง SUBTYPE เดิมมีอยู่แล้ว แค่รู้ความหมายชัดขึ้น<div class="from-to"><span class="new">INI=แพกเกจ · OPT=ซับแพกเกจ</span></div></div>
+        <div class="diff-card"><h4>② INI/OPT ชัดขึ้น</h4>ช่อง SUBTYPE = คอร์สหลัก vs ออพชั่น (stand-alone rule)<div class="from-to"><span class="new">INI=หลักยืนเดี่ยว · OPT=เสริม</span></div></div>
         <div class="diff-card"><h4>③ ชั้น PKG ใหม่</h4>รหัสแคมเปญ/แพกเกจ/ซับแพกเกจ<div class="from-to"><span class="new">PKG-…</span> เสียบบน CRS</div></div>
         <div class="diff-card"><h4>④ ซิลิโคนใช้ชื่อยี่ห้อ</h4>เลิกใช้ STD/PREM ที่อ่านไม่รู้ยี่ห้อ<div class="from-to"><span class="old">SLSTD/SLPREM</span> → <span class="new">BDEV/MKA/IMPL/GEN</span></div></div>
         <div class="diff-card"><h4>⑤ เพิ่ม token D5</h4>แบรนด์ booster + หัตถการใหม่<div class="from-to"><span class="new">VTRN · DEWV · HGL · SUBC …</span></div></div>
@@ -169,8 +169,8 @@ body.locked .mobile-toggle{display:none}
           <tr><td>TYPE</td><td>ดริปวิตามิน</td><td>Vitamin/IV</td><td><code>VIT</code></td></tr>
           <tr><td>TYPE</td><td>ทรีทเมนต์</td><td>Treatment</td><td><code>TRT</code></td></tr>
           <tr><td>TYPE</td><td>เบ็ดเตล็ด</td><td>Miscellaneous</td><td><code>MSC</code></td></tr>
-          <tr><td>SUBTYPE</td><td>คอร์สหลัก = <strong>แพกเกจ</strong></td><td>Initial / package</td><td><code>INI</code></td></tr>
-          <tr><td>SUBTYPE</td><td>ตัวเสริม/อัพ = <strong>ซับแพกเกจ</strong></td><td>Option / subpackage</td><td><code>OPT</code></td></tr>
+          <tr><td>SUBTYPE</td><td><strong>คอร์สหลักเริ่มต้น</strong> (ยืนเดี่ยวได้)</td><td>Initial / main</td><td><code>INI</code></td></tr>
+          <tr><td>SUBTYPE</td><td><strong>ออพชั่น / ตัวเสริม</strong> (ยืนเดี่ยวไม่ได้)</td><td>Option / add-on</td><td><code>OPT</code></td></tr>
         </tbody>
       </table>
       <p style="font-size:.88rem;color:var(--ink-mid)">หมวด (CATEGORY) ฝั่ง SKN: <code>FIL</code> ฟิลเลอร์ · <code>BTX</code> โบท็อกซ์ · <code>EBD</code> เครื่องพลังงาน · <code>SKB</code> สกินบูสเตอร์ · <code>BIO</code> ไบโอ · <code>THR</code> ร้อยไหม · <code>MLZ</code> ฝ้า · <code>FAT</code> แฟต · <code>ACS</code> หลุมสิว · <code>GEN</code> สกินทั่วไป &nbsp;|&nbsp; ฝั่ง SUR: <code>NOSE</code> · <code>EYE</code> · <code>LIP</code> · <code>CHIN</code> · <code>FACFT</code> · <code>PTRYG</code></p>
@@ -228,6 +228,7 @@ body.locked .mobile-toggle{display:none}
 
       <h2 id="pkg">5 · ชั้น PKG ใหม่ — แคมเปญ / แพกเกจ / ซับแพกเกจ</h2>
       <p>ของใหม่ล้วน — ชั้นบางๆที่ <strong>อ้างถึง</strong> รหัส CRS (ไม่ใช่ระบบขนาน):</p>
+      <div class="callout"><strong>⚠️ อย่าสับสน 2 แกน:</strong> <code>INI/OPT</code> = property ของ <em>คอร์ส</em> (หลักเริ่มต้น vs ออพชั่น/ตัวเสริม) &nbsp;·&nbsp; <code>package/subpackage</code> = โครงของ <em>แคมเปญ</em> (ชุดฐาน vs ตัวอัพในชุด) — <strong>คนละแกน ไม่เท่ากัน</strong>. แคมเปญหยิบ "คอร์ส" (ที่เป็น INI หรือ OPT) มาประกอบเป็น package/subpackage</div>
       <pre><code>PKG-{GROUP}-{HOOK}-{C+YYMM}-{SET}          ← แพกเกจหลัก
 PKG-{GROUP}-{HOOK}-{C+YYMM}-{SET}-{UPGRADE} ← ซับแพกเกจ (อัพ)
 
@@ -238,10 +239,10 @@ PKG-{GROUP}-{HOOK}-{C+YYMM}-{SET}-{UPGRADE} ← ซับแพกเกจ (อ
   SETA  = ชื่อชุด (คนตั้งเอง)
   U400  = อัพเป็นอะไร (ตั้งชื่อตามสิ่งที่อัพ)</code></pre>
       <table>
-        <thead><tr><th>ระดับ</th><th>ชื่อไทย</th><th>English</th><th>map เป็น</th></tr></thead>
+        <thead><tr><th>ระดับ</th><th>ชื่อไทย</th><th>English</th><th>รหัส</th></tr></thead>
         <tbody>
-          <tr><td>package</td><td>แพกเกจ (ชุดฐาน)</td><td>package</td><td><code>INI</code> course + PKG</td></tr>
-          <tr><td>subpackage</td><td>ตัวอัพเซลล์</td><td>subpackage</td><td><code>OPT</code> course + <code>-U…</code></td></tr>
+          <tr><td>package</td><td>ชุดแคมเปญ (ชุดฐาน)</td><td>package</td><td><code>PKG-…-SET</code></td></tr>
+          <tr><td>subpackage</td><td>ตัวอัพในชุด</td><td>subpackage</td><td><code>PKG-…-SET-U…</code></td></tr>
           <tr><td>campaign</td><td>แคมเปญลงวันที่</td><td>campaign</td><td><code>PKG-…-C2602</code></td></tr>
         </tbody>
       </table>
