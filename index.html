@@ -103,10 +103,12 @@ body.locked .mobile-toggle{display:none}
       <a href="#diff">2 · อะไรเปลี่ยนไป</a>
       <a href="#crs">3 · โครง CRS 7 ช่อง</a>
       <a href="#added">4 · รหัสที่เพิ่งเพิ่ม (D5)</a>
-      <a href="#pkg">5 · ชั้น PKG (แพกเกจ)</a>
-      <a href="#journey">6 · UX/UI Journey</a>
-      <a href="#example">7 · ตัวอย่างจริง</a>
-      <a href="#next">8 · ขั้นต่อไป</a>
+      <a href="#sur">5 · รหัสศัลยกรรม (SUR)</a>
+      <a href="#dedup">6 · Dedup + เปิด/ปิด</a>
+      <a href="#pkg">7 · ชั้น PKG (แพกเกจ)</a>
+      <a href="#journey">8 · UX/UI Journey</a>
+      <a href="#example">9 · ตัวอย่างจริง</a>
+      <a href="#next">10 · ขั้นต่อไป</a>
     </nav>
     <div class="sidebar-section" style="margin-top:auto">draft v0.1 · 2026-06-06</div>
   </aside>
@@ -147,9 +149,9 @@ body.locked .mobile-toggle{display:none}
         <div class="diff-card"><h4>⑥ ตัดของเลิกขาย</h4>verify จาก JERA จริง (del_flag/show_flag)<div class="from-to"><span class="old">LMED · 40T · 0.5CC …</span> ออก</div></div>
       </div>
 
-      <h2 id="crs">3 · โครง CRS — รหัสคอร์สถาวร (7 ช่อง · ไม่เปลี่ยน)</h2>
-      <pre><code>CRS - {TYPE} - {SUBTYPE} - {CATEGORY} - {DIFFERENTIATOR} - {SEQ} - {VARIANT}
- 1      2         3            4              5             6        7
+      <h2 id="crs">3 · โครง CRS — รหัสคอร์สถาวร (7 ช่อง + ช่อง 8 ตัวเลือก)</h2>
+      <pre><code>CRS - {TYPE} - {SUBTYPE} - {CATEGORY} - {DIFFERENTIATOR} - {SEQ} - {VARIANT} [- {VERSION}]
+ 1      2         3            4              5             6        7         8 (ตัวเลือก)
 
 ตัวอย่าง: CRS-SKN-INI-FIL-RST-001-4CC
           ฟิลเลอร์ Restylane 4cc (เคสรีวิว)</code></pre>
@@ -161,7 +163,9 @@ body.locked .mobile-toggle{display:none}
         <span class="seg-chip">5 · DIFFERENTIATOR = ตัวแยก</span>
         <span class="seg-chip">6 · SEQ = รีวิว</span>
         <span class="seg-chip">7 · VARIANT = รุ่นย่อย</span>
+        <span class="seg-chip">8 · VERSION = เวอร์ชัน (ตัวเลือก)</span>
       </div>
+      <div class="callout"><strong>VERSION (ช่อง 8) ปกติไม่มี</strong> (= <code>V001</code> โดยปริยาย) · dup ที่เก็บ → <code>-V002</code>, <code>-V003</code> · <strong>แยกจาก SEQ (รีวิว)</strong> — review ซ้ำ 2 รอบก็ยังต่างกันได้</div>
       <table>
         <thead><tr><th>ช่อง</th><th>ชื่อไทย</th><th>English</th><th>ค่า (code)</th></tr></thead>
         <tbody>
@@ -227,7 +231,37 @@ body.locked .mobile-toggle{display:none}
         &nbsp;— ทั้งหมด <code>del_flag=true</code> หรือ <code>show_flag=false</code> = ไม่อยู่บนเมนูแล้ว
       </p>
 
-      <h2 id="pkg">5 · ชั้น PKG ใหม่ — แคมเปญ / แพกเกจ / ซับแพกเกจ</h2>
+      <h2 id="sur">5 · รหัสศัลยกรรม (SUR scheme B)</h2>
+      <p>ศัลยกรรมแยกตาม <strong>เทคนิค/ตำแหน่ง</strong> ไม่ใช่หมอ → ใส่ใน <strong>DIFFERENTIATOR (ช่อง 5)</strong> &nbsp;·&nbsp; <strong>หมอ → VARIANT (ช่อง 7)</strong> (กรอกตอนสร้าง)</p>
+      <div class="callout"><strong>เคส "ปากซ้ำ":</strong> ศัลยกรรมปากมี 3 แบบ (ปากบน / ปากล่าง / บน+ล่าง). ถ้า differentiator = <em>หมอ</em> → ทั้ง 3 แบบรหัสชนกัน. แก้เป็น differentiator = <em>เทคนิค/ตำแหน่ง</em> (<code>UPPER</code> / <code>LOWER</code> / <code>BOTH</code>) → แยกกันได้สะอาด</div>
+      <pre><code>ตัวอย่าง (differentiator = เทคนิค/ตำแหน่ง · หมอ = VARIANT):
+CRS-SUR-INI-EYE-DBL-001-DRDO     ตา 2 ชั้น          หมอ Do
+CRS-SUR-INI-LIP-UPPER-001-DRBALL ปากบน              หมอ Ball
+CRS-SUR-INI-NOSE-OPEN-001-DRDO   จมูกเปิด (open)     หมอ Do</code></pre>
+      <h3>technique token ต่อหมวด</h3>
+      <table>
+        <thead><tr><th>หมวด (CATEGORY)</th><th>technique token (DIFFERENTIATOR)</th></tr></thead>
+        <tbody>
+          <tr><td><code>EYE</code> ตา</td><td><code>DBL</code> · <code>PTOS</code> · <code>BROW</code> · <code>EPIC</code> · <code>LOWER</code> · <code>REVIS</code> …</td></tr>
+          <tr><td><code>LIP</code> ปาก</td><td><code>UPPER</code> · <code>LOWER</code> · <code>BOTH</code></td></tr>
+          <tr><td><code>NOSE</code> จมูก</td><td><code>OPEN</code> · <code>SEMI</code> · <code>CLOSED</code></td></tr>
+          <tr><td><code>PTRYG</code> เปลือกตา/ต้อ</td><td><code>PTG</code> · <code>PTGAF</code></td></tr>
+          <tr><td><code>CHIN</code> คาง</td><td><code>STRCT</code></td></tr>
+          <tr><td><span class="badge new">ใหม่</span> <code>GEN</code> ทั่วไป</td><td>option ข้ามหัตถการ (เช่น ยาสลบ Propofol)</td></tr>
+        </tbody>
+      </table>
+      <blockquote style="font-size:.85rem"><span class="badge existing">verified</span> หัตถการศัลย์ <strong>73 ตัว</strong> → <strong>0 collision</strong></blockquote>
+
+      <h2 id="dedup">6 · Dedup + เปิด/ปิด (active)</h2>
+      <p>เมื่อระบบเจอรหัสที่ "ออกมาเหมือนกัน" ต้องมีนโยบายจัดการ — และต้องแยก <em>ราคา</em> ออกจาก <em>ตัวรหัส</em> ให้ชัด:</p>
+      <pre><code>dedup policy:
+เจอรหัสซ้ำ (คนละราคา) → flag ถาม user
+   ├ เก็บ (ของจริงคนละตัว)  → +V002  (กลายเป็น 2 รหัส)
+   └ ผิด (คีย์พลาด)         → soft-delete ตัวเดิม + สร้างใหม่</code></pre>
+      <div class="callout"><strong>price = transaction (ไม่อยู่ในรหัส).</strong> "รหัสเดียว ราคาต่าง" เป็น <strong>SIGNAL</strong> ให้เช็ก 3 อย่าง: <br>① แคมเปญ → ไปอยู่ที่ transaction &nbsp;·&nbsp; ② attribute ขาด → เพิ่ม token &nbsp;·&nbsp; ③ dup → ลบ. <br>ราคา tier ที่ <em>มีความหมาย</em> = ทำเป็น token (เช่น silicone <code>BDEV</code> / <code>MKA</code> / <code>IMPL</code>)</div>
+      <div class="callout"><strong>active / soft-delete = หน้าที่ user</strong> (Nothing-is-Deleted): รหัส = <em>ตัวตนถาวร</em>, active = <em>สถานะ</em> ไม่ใช่ตัวกรอง — ปิดการขายได้ แต่รหัสไม่หาย</div>
+
+      <h2 id="pkg">7 · ชั้น PKG ใหม่ — แคมเปญ / แพกเกจ / ซับแพกเกจ</h2>
       <p>ของใหม่ล้วน — ชั้นบางๆที่ <strong>อ้างถึง</strong> รหัส CRS (ไม่ใช่ระบบขนาน):</p>
       <div class="callout"><strong>⚠️ อย่าสับสน 2 แกน:</strong> <code>INI/OPT</code> = property ของ <em>คอร์ส</em> (หลักเริ่มต้น vs ออพชั่น/ตัวเสริม) &nbsp;·&nbsp; <code>package/subpackage</code> = โครงของ <em>แคมเปญ</em> (ชุดฐาน vs ตัวอัพในชุด) — <strong>คนละแกน ไม่เท่ากัน</strong>. แคมเปญหยิบ "คอร์ส" (ที่เป็น INI หรือ OPT) มาประกอบเป็น package/subpackage</div>
       <pre><code>PKG-{GROUP}-{HOOK}-{C+YYMM}-{SET}          ← แพกเกจหลัก
@@ -276,7 +310,7 @@ PKG-{GROUP}-{HOOK}-{C+YYMM}-{SET}-{UPGRADE} ← ซับแพกเกจ (อ
       </table>
       <div class="callout"><strong>หัวใจ:</strong> รหัส package/subpackage เก็บแค่ <em>โครงสร้าง</em> (อะไรอยู่ในชุด · อัพเป็นอะไร) — <strong>ราคา/ส่วนต่าง/แคมเปญที่ลูกค้าเลือก = transaction</strong> (ไม่ฝังในรหัส) → เปลี่ยนราคา/ทำโปรใหม่ได้ โดยรหัสสินค้าไม่เปลี่ยน</div>
 
-      <h2 id="journey">6 · UX/UI Journey — สร้างคอร์ส/แพกเกจ ทีละขั้น</h2>
+      <h2 id="journey">8 · UX/UI Journey — สร้างคอร์ส/แพกเกจ ทีละขั้น</h2>
       <p>เวลาแอดมินสร้างของใหม่ใน GENCODE จะเดินตาม <strong>wizard ถาม-ตอบ</strong> — แต่ละคำตอบเติมรหัสทีละช่อง (เห็นรหัสค่อยๆโตขึ้นสด):</p>
       <pre><code>┌─ สร้างใหม่ ──────────────────────
 │ Q1  แผนกไหน?  ◉ สกิน  ○ ศัลยกรรม   → TYPE
@@ -318,7 +352,7 @@ Q7 4cc          → CRS-SKN-INI-FIL-RST-001-4CC ✓</code></pre>
   • อัพเซลล์เส้นไหนนิยม   (ฐาน → -U400 / -U600)
   • เดือนไหนพีค         (PKG-%-C2602)</code></pre>
 
-      <h2 id="example">7 · ตัวอย่างจริง — แคมเปญ Oligio ก.พ. 2026</h2>
+      <h2 id="example">9 · ตัวอย่างจริง — แคมเปญ Oligio ก.พ. 2026</h2>
       <p>1 แคมเปญ = 9 รหัส (6 ตัวสินค้า CRS ใช้ซ้ำได้ + 3 ตัวแคมเปญ PKG):</p>
       <pre><code>▸ CRS — สินค้า (ถาวร ใช้ซ้ำข้ามแคมเปญ)
 CRS-SKN-INI-EBD-OLG-001-300SH   Oligio 300sh    หลัก (hook)
@@ -346,7 +380,7 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600sh
         </tbody>
       </table>
 
-      <h2 id="next">8 · ขั้นต่อไป (dev)</h2>
+      <h2 id="next">10 · ขั้นต่อไป (dev)</h2>
       <p><strong>เครื่องมือ test-prompt / eval-harness</strong> (issue 8): ป้อน 485 คอร์สที่เคาะรหัสไว้แล้วเป็นเฉลย → ให้ parser สร้างรหัสกลับมา → ต้องตรงเป๊ะ = พิสูจน์ว่า logic เสถียร ไม่เพี้ยน แล้วค่อยปล่อยให้คีย์ของใหม่. จากนั้น <strong>Chrome extension</strong> สร้างแถวจริงใน JERA.</p>
       <div class="nav-footer">
         <span>GENCODE changes guide · draft v0.1</span>
