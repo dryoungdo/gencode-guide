@@ -103,9 +103,10 @@ body.locked .mobile-toggle{display:none}
       <a href="#diff">2 · อะไรเปลี่ยนไป</a>
       <a href="#crs">3 · โครง CRS 7 ช่อง</a>
       <a href="#added">4 · รหัสที่เพิ่งเพิ่ม (D5)</a>
-      <a href="#pkg">5 · ชั้น PKG (แคมเปญ)</a>
-      <a href="#example">6 · ตัวอย่างจริง</a>
-      <a href="#next">7 · ขั้นต่อไป</a>
+      <a href="#pkg">5 · ชั้น PKG (แพกเกจ)</a>
+      <a href="#journey">6 · UX/UI Journey</a>
+      <a href="#example">7 · ตัวอย่างจริง</a>
+      <a href="#next">8 · ขั้นต่อไป</a>
     </nav>
     <div class="sidebar-section" style="margin-top:auto">draft v0.1 · 2026-06-06</div>
   </aside>
@@ -248,7 +249,76 @@ PKG-{GROUP}-{HOOK}-{C+YYMM}-{SET}-{UPGRADE} ← ซับแพกเกจ (อ
       </table>
       <div class="callout"><strong>อะไรอยู่ตรงไหน:</strong> ในรหัส = กลุ่ม·hook·เดือน·ชุด·อัพ &nbsp;|&nbsp; ในนิยาม (registry) = BOM ของแถม·ชื่อไทยเต็ม·เงื่อนไข &nbsp;|&nbsp; ใน transaction = ราคา·ส่วนต่าง·อัพที่ลูกค้าเลือก</div>
 
-      <h2 id="example">6 · ตัวอย่างจริง — แคมเปญ Oligio ก.พ. 2026</h2>
+      <h3>เข้าใจ 3 ระดับให้ชัด (นี่คือของใหม่ที่สุด)</h3>
+      <p><code>package</code> เป็นของใหม่ที่สุดในระบบ — ขออธิบายละเอียด. มันคือ <strong>"ชุดที่ขาย"</strong> ซึ่งประกอบจาก <strong>คอร์สหลายตัว</strong> มาขายเป็นแพ็ค พร้อมตัวเลือกอัพเกรด:</p>
+      <pre><code>แคมเปญ (campaign)  ─ ห่อด้วย เดือน-ปี + เงื่อนไข
+ └ แพกเกจ (package) ─ ชุดฐาน = สินค้าหลัก(hook) + ของแถม
+     ├ ซับแพกเกจ #1 ─ ตัวเลือกอัพ (เช่น อัพชอต)
+     └ ซับแพกเกจ #2 ─ ตัวเลือกอัพ (เช่น เปลี่ยนยี่ห้อ)
+         ▲ ทุกชั้น "อ้างถึง" คอร์ส CRS จริง (ไม่ทำซ้ำ)</code></pre>
+      <table>
+        <thead><tr><th>ระดับ</th><th>คืออะไร (ละเอียด)</th><th>ตัวอย่าง</th></tr></thead>
+        <tbody>
+          <tr><td><strong>package</strong><br>แพกเกจ</td><td>ชุดฐานที่ขาย = <strong>สินค้าหลัก (hook = ตัวดึงดูด/มูลค่าสูงสุด)</strong> + ของแถม/เสริม (BOM) ขายเป็นชุดราคาโปร</td><td>"โปรย้อนวัย SETA" = Oligio 300sh + แถม Ultraformer + fat + Gluta</td></tr>
+          <tr><td><strong>subpackage</strong><br>ซับแพกเกจ</td><td>ตัวเลือก <strong>อัพเกรด</strong> ที่แตกจาก package หลัก — ลูกค้าจ่ายเพิ่มเพื่ออัพ</td><td>อัพ Oligio 300→400 shots (จ่ายส่วนต่าง)</td></tr>
+          <tr><td><strong>campaign</strong><br>แคมเปญ</td><td>ตัวห่อ package <strong>ลงช่วงเวลา</strong> (เดือน-ปี) + เงื่อนไข (อัพในช่องสีเดียวกัน · ลดลูกค้าเก่า)</td><td>แคมเปญเดือน ก.พ. 2026 = <code>C2602</code></td></tr>
+        </tbody>
+      </table>
+      <h3>ซับแพกเกจ (อัพเซลล์) มี 4 แบบ</h3>
+      <table>
+        <thead><tr><th>แบบ</th><th>คือ</th><th>ตัวอย่างท้ายรหัส</th></tr></thead>
+        <tbody>
+          <tr><td>tier-jump</td><td>ขยับขั้น/จำนวน</td><td><code>-U400</code> (300→400sh)</td></tr>
+          <tr><td>brand-swap</td><td>เปลี่ยนยี่ห้อ</td><td><code>-BNX50</code> (เปลี่ยนเป็น Bienox)</td></tr>
+          <tr><td>qty-add</td><td>เพิ่มจำนวน</td><td><code>-ADD5</code> (เพิ่ม fat 5cc)</td></tr>
+          <tr><td>exchange-buy</td><td>แลกซื้อ</td><td><code>-X12</code> (แลกซื้อ 12 ครั้ง)</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>หัวใจ:</strong> รหัส package/subpackage เก็บแค่ <em>โครงสร้าง</em> (อะไรอยู่ในชุด · อัพเป็นอะไร) — <strong>ราคา/ส่วนต่าง/แคมเปญที่ลูกค้าเลือก = transaction</strong> (ไม่ฝังในรหัส) → เปลี่ยนราคา/ทำโปรใหม่ได้ โดยรหัสสินค้าไม่เปลี่ยน</div>
+
+      <h2 id="journey">6 · UX/UI Journey — สร้างคอร์ส/แพกเกจ ทีละขั้น</h2>
+      <p>เวลาแอดมินสร้างของใหม่ใน GENCODE จะเดินตาม <strong>wizard ถาม-ตอบ</strong> — แต่ละคำตอบเติมรหัสทีละช่อง (เห็นรหัสค่อยๆโตขึ้นสด):</p>
+      <pre><code>┌─ สร้างใหม่ ──────────────────────
+│ Q1  แผนกไหน?  ◉ สกิน  ○ ศัลยกรรม   → TYPE
+│ Q2  ถาวร หรือ แคมเปญ/โปร?
+│      ├ ถาวร   → ถาม 6 ข้อ เติม 7 ช่อง จบ
+│      └ แคมเปญ ↓
+│
+│ ── ทางแคมเปญ (ประกอบแพกเกจ) ──
+│ 2.1 เลือก ปี-เดือน               → C2602
+│ 2.2 สินค้าหลัก (hook/ตัวดึงดูด)?   → เลือกจากคอร์สที่มี
+│       เช่น Oligio 300sh
+│ 2.3 ใส่ของแถม/เสริม (+ ทีละตัว)    → BOM
+│       + Ultraformer + fat + Gluta
+│   ▶ ได้รหัสแพกเกจหลัก:
+│     PKG-SKN-OLG-C2602-SETA
+│
+│ Q3  มีอัพเซลล์ (ซับแพกเกจ)?
+│ 3.1 + ทีละตัว (ตั้งชื่อตามสิ่งที่อัพ)
+│       อัพ 400sh → PKG-…-SETA-U400
+│       อัพ 600sh → PKG-…-SETA-U600
+│ ▶ เซฟ = ได้แคมเปญ 1 ชุด พร้อมขาย
+└──────────────────────────────────</code></pre>
+      <h3>ทางถาวร — เห็นรหัส 7 ช่องโตทีละคำถาม</h3>
+      <pre><code>Q2 แผนกสกิน      → CRS-SKN-_
+Q3 หลัก          → CRS-SKN-INI-_
+Q4 ฟิลเลอร์       → CRS-SKN-INI-FIL-_
+Q5 Restylane     → CRS-SKN-INI-FIL-RST-_
+Q6 เคสรีวิว       → CRS-SKN-INI-FIL-RST-001-_
+Q7 4cc          → CRS-SKN-INI-FIL-RST-001-4CC ✓</code></pre>
+      <h3>เส้นทางลูกค้า + รายงาน (customer journey)</h3>
+      <p>โครงนี้ออกแบบมาให้ <strong>ตามรอยลูกค้า</strong>ได้: เข้ามาด้วย <strong>แพกเกจหลัก</strong> → <strong>อัพเป็นซับแพกเกจ</strong>ตัวไหน → report เห็นครบ</p>
+      <pre><code>ลูกค้า → ซื้อ PKG-SKN-OLG-C2602-SETA   (แพกเกจหลัก)
+              │
+              └─ อัพเป็น ─→  -U400 ?   หรือ   -U600 ?
+
+รายงานตอบได้:
+  • แพกเกจไหนขายดี      (group by PKG-…-SETA)
+  • hook ไหนดึงลูกค้า    (PKG-%-OLG-%)
+  • อัพเซลล์เส้นไหนนิยม   (ฐาน → -U400 / -U600)
+  • เดือนไหนพีค         (PKG-%-C2602)</code></pre>
+
+      <h2 id="example">7 · ตัวอย่างจริง — แคมเปญ Oligio ก.พ. 2026</h2>
       <p>1 แคมเปญ = 9 รหัส (6 ตัวสินค้า CRS ใช้ซ้ำได้ + 3 ตัวแคมเปญ PKG):</p>
       <pre><code>▸ CRS — สินค้า (ถาวร ใช้ซ้ำข้ามแคมเปญ)
 CRS-SKN-INI-EBD-OLG-001-300SH   Oligio 300sh    หลัก (hook)
@@ -276,7 +346,7 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600sh
         </tbody>
       </table>
 
-      <h2 id="next">7 · ขั้นต่อไป (dev)</h2>
+      <h2 id="next">8 · ขั้นต่อไป (dev)</h2>
       <p><strong>เครื่องมือ test-prompt / eval-harness</strong> (issue 8): ป้อน 485 คอร์สที่เคาะรหัสไว้แล้วเป็นเฉลย → ให้ parser สร้างรหัสกลับมา → ต้องตรงเป๊ะ = พิสูจน์ว่า logic เสถียร ไม่เพี้ยน แล้วค่อยปล่อยให้คีย์ของใหม่. จากนั้น <strong>Chrome extension</strong> สร้างแถวจริงใน JERA.</p>
       <div class="nav-footer">
         <span>GENCODE changes guide · draft v0.1</span>
