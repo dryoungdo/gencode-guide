@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENCODE — สรุปการเปลี่ยนแปลง | Youngdo Clinic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+  --bg:#fbf8f1; --bg-alt:#f5f0e6; --ink:#111827; --ink-mid:#4b5563; --ink-light:#9ca3af;
+  --accent:#27246f; --accent-light:#4338ca; --warm-red:#7d241f; --warm-red-bg:#a33c32;
+  --gold:#6f4a0b; --sidebar:#101124; --sidebar-text:#e5e7eb; --sidebar-hover:#1e1b4b;
+  --code-bg:#0d1117; --code-text:#e6edf3; --card-border:#e5e0d5; --card-hover:#ede8dd;
+  --radius:10px; --radius-sm:6px; --shadow:0 1px 3px rgba(0,0,0,.08); --shadow-hover:0 4px 12px rgba(0,0,0,.12); --transition:.2s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:17px;scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans Thai','Noto Sans Thai',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.86;-webkit-font-smoothing:antialiased}
+.book-layout{display:grid;grid-template-columns:276px 1fr;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;background:var(--sidebar);color:var(--sidebar-text);padding:1.5rem 0;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-brand{display:flex;align-items:center;gap:.75rem;padding:0 1.25rem 1.5rem;text-decoration:none;color:var(--sidebar-text);border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:1rem}
+.sidebar-psi{width:36px;height:36px;border-radius:50%;background:var(--warm-red-bg);color:#fff;font-size:1.1rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sidebar-brand-text{font-size:1rem;font-weight:700;line-height:1.2}
+.sidebar-brand-text small{display:block;font-size:.7rem;font-weight:400;color:rgba(255,255,255,.5)}
+.sidebar nav{flex:1}
+.sidebar-section{padding:.5rem 1.25rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);font-weight:600}
+.sidebar a{display:block;padding:.45rem 1.25rem;color:var(--sidebar-text);text-decoration:none;font-size:.85rem;transition:background var(--transition);border-left:3px solid transparent}
+.sidebar a:hover{background:var(--sidebar-hover)}
+.sidebar a.active{background:var(--sidebar-hover);border-left-color:var(--warm-red-bg);font-weight:600}
+.reader{overflow-y:auto}
+.topbar{position:sticky;top:0;background:rgba(251,248,241,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--card-border);padding:.75rem 2rem;display:flex;align-items:center;justify-content:space-between;z-index:10}
+.topbar-title{font-size:.85rem;font-weight:600;color:var(--ink-mid)}
+.topbar-date{font-size:.8rem;color:var(--ink-light);font-family:'JetBrains Mono',monospace}
+.content-shell{max-width:860px;margin:0 auto;padding:2.5rem 2rem 4rem}
+.content-shell h1{font-size:1.9rem;font-weight:800;margin-bottom:.5rem;color:var(--accent)}
+.article-meta{font-size:.85rem;color:var(--ink-light);margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--card-border)}
+.article-meta .tag{display:inline-block;padding:.15rem .5rem;background:var(--bg-alt);border-radius:var(--radius-sm);font-size:.75rem;font-weight:500;color:var(--ink-mid);margin-left:.25rem}
+.content-shell h2{font-size:1.35rem;font-weight:700;margin:2.5rem 0 .75rem;color:var(--ink);scroll-margin-top:5rem}
+.content-shell h3{font-size:1.05rem;font-weight:600;margin:1.5rem 0 .5rem;color:var(--ink)}
+.content-shell p{margin-bottom:1rem;color:var(--ink)}
+.content-shell ul,.content-shell ol{margin-bottom:1rem;padding-left:1.5rem}
+.content-shell li{margin-bottom:.35rem}
+code{font-family:'JetBrains Mono',monospace;font-size:.85em;background:var(--bg-alt);padding:.15rem .35rem;border-radius:3px}
+pre{background:var(--code-bg);color:var(--code-text);padding:1.25rem 1.5rem;border-radius:var(--radius);overflow-x:auto;margin-bottom:1.5rem;font-size:.82rem;line-height:1.7}
+pre code{background:none;padding:0;font-size:inherit;color:inherit}
+blockquote{border-left:3px solid var(--warm-red-bg);padding:.75rem 1.25rem;margin-bottom:1rem;background:var(--bg-alt);border-radius:0 var(--radius-sm) var(--radius-sm) 0;color:var(--ink-mid)}
+table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:.88rem}
+th,td{padding:.55rem .7rem;text-align:left;border-bottom:1px solid var(--card-border);vertical-align:top}
+th{font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-mid);background:var(--bg-alt)}
+td code{font-size:.8rem;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.12rem .45rem;border-radius:var(--radius-sm);font-size:.7rem;font-weight:600;white-space:nowrap}
+.badge.new{background:#fef3c7;color:#92400e}
+.badge.existing{background:#d1fae5;color:#065f46}
+.badge.removed{background:#fee2e2;color:#991b1b;text-decoration:line-through}
+.lead{font-size:1.05rem;color:var(--ink-mid);margin-bottom:1.5rem}
+.diff-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:1.5rem}
+.diff-card{border:1px solid var(--card-border);border-radius:var(--radius);padding:1rem 1.15rem;background:var(--bg)}
+.diff-card h4{font-size:.95rem;font-weight:700;color:var(--accent);margin-bottom:.35rem}
+.diff-card .from-to{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--ink-mid);margin-top:.4rem}
+.diff-card .from-to .old{color:var(--warm-red);text-decoration:line-through}
+.diff-card .from-to .new{color:#065f46;font-weight:600}
+.seg-legend{display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0 1.2rem;font-size:.75rem}
+.seg-chip{font-family:'JetBrains Mono',monospace;padding:.2rem .5rem;border-radius:var(--radius-sm);background:var(--bg-alt);border:1px solid var(--card-border)}
+.callout{background:var(--bg-alt);border:1px solid var(--card-border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:.92rem}
+.callout strong{color:var(--accent)}
+.nav-footer{display:flex;justify-content:space-between;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--card-border);font-size:.85rem;color:var(--ink-light)}
+.mobile-toggle{display:none;position:fixed;top:.75rem;left:.75rem;z-index:100;width:40px;height:40px;border-radius:var(--radius-sm);background:var(--sidebar);color:#fff;border:none;font-size:1.2rem;cursor:pointer}
+@media(max-width:860px){
+  .book-layout{grid-template-columns:1fr}
+  .sidebar{display:none;position:fixed;top:0;left:0;width:276px;z-index:50;box-shadow:4px 0 20px rgba(0,0,0,.3)}
+  .sidebar.open{display:flex}
+  .mobile-toggle{display:flex;align-items:center;justify-content:center}
+  .topbar{padding-left:3.5rem}
+  .content-shell{padding:2rem 1.1rem 3rem}
+  table{font-size:.8rem}
+}
+@media(max-width:480px){html{font-size:15px}}
+#gate{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:1rem}
+.gate-card{max-width:380px;width:100%;text-align:center}
+.gate-psi{width:64px;height:64px;border-radius:50%;background:var(--warm-red-bg);color:#fff;font-size:2rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem}
+.gate-card h1{font-size:1.4rem;font-weight:800;color:var(--accent);margin-bottom:.25rem}
+.gate-card p{color:var(--ink-mid);font-size:.85rem;margin-bottom:1.5rem}
+.gate-card input{width:100%;padding:.65rem 1rem;border:1px solid var(--card-border);border-radius:var(--radius-sm);font-size:.9rem;font-family:inherit;background:var(--bg-alt);margin-bottom:.75rem}
+.gate-card button{width:100%;padding:.75rem;border:none;border-radius:var(--radius);background:var(--accent);color:#fff;font-weight:600;font-size:.95rem;cursor:pointer;font-family:inherit}
+.gate-err{color:var(--warm-red);font-size:.8rem;margin-top:.75rem;display:none}
+body.locked .book-layout{display:none}
+body.locked .mobile-toggle{display:none}
+</style>
+</head>
+<body class="locked">
+<div id="gate"><div class="gate-card"><div class="gate-psi">G</div><h1>GENCODE</h1><p>เอกสารภายใน Youngdo Clinic · กรุณาใส่รหัสผ่าน</p><form id="gate-form"><input type="text" id="gu" placeholder="Username" autocomplete="username"><input type="password" id="gp" placeholder="Password" autocomplete="current-password"><button type="submit">เข้าสู่ระบบ</button><p class="gate-err" id="ge">Username หรือ password ไม่ถูกต้อง</p></form></div></div>
+<button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+<div class="book-layout">
+  <aside class="sidebar">
+    <a class="sidebar-brand" href="#top">
+      <span class="sidebar-psi">G</span>
+      <span class="sidebar-brand-text">GENCODE<small>Youngdo Clinic</small></span>
+    </a>
+    <nav>
+      <div class="sidebar-section">สารบัญ</div>
+      <a href="#overview" class="active">1 · ภาพรวม</a>
+      <a href="#diff">2 · อะไรเปลี่ยนไป</a>
+      <a href="#crs">3 · โครง CRS 7 ช่อง</a>
+      <a href="#added">4 · รหัสที่เพิ่งเพิ่ม (D5)</a>
+      <a href="#pkg">5 · ชั้น PKG (แคมเปญ)</a>
+      <a href="#example">6 · ตัวอย่างจริง</a>
+      <a href="#next">7 · ขั้นต่อไป</a>
+    </nav>
+    <div class="sidebar-section" style="margin-top:auto">draft v0.1 · 2026-06-06</div>
+  </aside>
+
+  <main class="reader" id="top">
+    <div class="topbar">
+      <span class="topbar-title">GENCODE — สรุปการเปลี่ยนแปลง (สำหรับทีม)</span>
+      <span class="topbar-date">2026-06-06</span>
+    </div>
+    <div class="content-shell">
+      <h1>GENCODE — สรุปการเปลี่ยนแปลง</h1>
+      <div class="article-meta">
+        เอกสารสำหรับทีม (พี่พิม · พี่แอมแป) · เทียบของเดิม ↔ ของใหม่
+        <span class="tag">DRAFT</span><span class="tag">รอ Dr.Do รีวิว</span>
+      </div>
+      <p class="lead">หน้านี้สรุปว่า <strong>ระบบรหัส GENCODE เปลี่ยนอะไรไปบ้าง</strong> จากของเดิม — มีตารางเทียบ <strong>ชื่อไทย / อังกฤษ / รหัส</strong> และแยกชัดว่าอันไหน <span class="badge existing">ของเดิม</span> อันไหน <span class="badge new">เพิ่งเพิ่ม</span></p>
+
+      <h2 id="overview">1 · ภาพรวม — ระบบทำงาน 3 ชั้น</h2>
+      <p>ก่อนดูรหัส ขอปูภาพใหญ่ก่อน เพราะมันเปลี่ยนวิธีคิดนิดนึง:</p>
+      <table>
+        <thead><tr><th>ชั้น</th><th>หน้าที่</th></tr></thead>
+        <tbody>
+          <tr><td><strong>GENCODE</strong></td><td>ชั้นออกแบบ — เข้าใจลำดับชั้น (แพกเกจ / ซับแพกเกจ / แคมเปญ)</td></tr>
+          <tr><td><strong>JERA</strong></td><td>ชั้นใช้งานจริง — แบนราบ 1 แถวต่อ 1 สิ่งที่ขาย <em>ไม่มีลำดับชั้น</em></td></tr>
+          <tr><td><strong>Chrome extension</strong></td><td>สะพาน — แปลงดีไซน์ GENCODE → สร้างแถวจริงใน JERA</td></tr>
+        </tbody>
+      </table>
+      <p>เพราะ JERA แบนราบ ลำดับชั้นที่มันเก็บไม่ได้ เลยไปอยู่ <strong>ในตัวรหัส</strong> และการจัดกลุ่มแคมเปญอยู่ใน registry ของ GENCODE</p>
+      <div class="callout"><strong>หลักการ 2 ชั้น:</strong> รหัส = <em>ตัวตนของสินค้า/คอร์ส</em> (มันคืออะไร) · ราคา / ส่วนลด / แคมเปญที่ลูกค้าเลือก = <em>transaction</em> (การขาย) — ไม่ปนกัน</div>
+
+      <h2 id="diff">2 · อะไรเปลี่ยนไป (diff จากของเดิม)</h2>
+      <div class="diff-grid">
+        <div class="diff-card"><h4>① ตัด checksum</h4>รหัส CRS เหลือ <strong>7 ช่อง</strong><div class="from-to"><span class="old">8 ช่อง</span> → <span class="new">7 ช่อง</span></div></div>
+        <div class="diff-card"><h4>② INI/OPT = แพกเกจ/ซับ</h4>ช่อง SUBTYPE เดิมมีอยู่แล้ว แค่รู้ความหมายชัดขึ้น<div class="from-to"><span class="new">INI=แพกเกจ · OPT=ซับแพกเกจ</span></div></div>
+        <div class="diff-card"><h4>③ ชั้น PKG ใหม่</h4>รหัสแคมเปญ/แพกเกจ/ซับแพกเกจ<div class="from-to"><span class="new">PKG-…</span> เสียบบน CRS</div></div>
+        <div class="diff-card"><h4>④ ซิลิโคนใช้ชื่อยี่ห้อ</h4>เลิกใช้ STD/PREM ที่อ่านไม่รู้ยี่ห้อ<div class="from-to"><span class="old">SLSTD/SLPREM</span> → <span class="new">BDEV/MKA/IMPL/GEN</span></div></div>
+        <div class="diff-card"><h4>⑤ เพิ่ม token D5</h4>แบรนด์ booster + หัตถการใหม่<div class="from-to"><span class="new">VTRN · DEWV · HGL · SUBC …</span></div></div>
+        <div class="diff-card"><h4>⑥ ตัดของเลิกขาย</h4>verify จาก JERA จริง (del_flag/show_flag)<div class="from-to"><span class="old">LMED · 40T · 0.5CC …</span> ออก</div></div>
+      </div>
+
+      <h2 id="crs">3 · โครง CRS — รหัสคอร์สถาวร (7 ช่อง · ไม่เปลี่ยน)</h2>
+      <pre><code>CRS - {TYPE} - {SUBTYPE} - {CATEGORY} - {DIFFERENTIATOR} - {SEQ} - {VARIANT}
+ 1      2         3            4              5             6        7
+
+ตัวอย่าง: CRS-SKN-INI-FIL-RST-001-4CC
+          ฟิลเลอร์ Restylane 4cc (เคสรีวิว)</code></pre>
+      <div class="seg-legend">
+        <span class="seg-chip">1 · CRS = คอร์ส</span>
+        <span class="seg-chip">2 · TYPE = ใครทำ</span>
+        <span class="seg-chip">3 · SUBTYPE = หลัก/เสริม</span>
+        <span class="seg-chip">4 · CATEGORY = หมวด</span>
+        <span class="seg-chip">5 · DIFFERENTIATOR = ตัวแยก</span>
+        <span class="seg-chip">6 · SEQ = รีวิว</span>
+        <span class="seg-chip">7 · VARIANT = รุ่นย่อย</span>
+      </div>
+      <table>
+        <thead><tr><th>ช่อง</th><th>ชื่อไทย</th><th>English</th><th>ค่า (code)</th></tr></thead>
+        <tbody>
+          <tr><td>TYPE</td><td>ผ่าตัด</td><td>Surgery</td><td><code>SUR</code></td></tr>
+          <tr><td>TYPE</td><td>ฉีด / เครื่อง (หมอทำ)</td><td>Skin</td><td><code>SKN</code></td></tr>
+          <tr><td>TYPE</td><td>ดริปวิตามิน</td><td>Vitamin/IV</td><td><code>VIT</code></td></tr>
+          <tr><td>TYPE</td><td>ทรีทเมนต์</td><td>Treatment</td><td><code>TRT</code></td></tr>
+          <tr><td>TYPE</td><td>เบ็ดเตล็ด</td><td>Miscellaneous</td><td><code>MSC</code></td></tr>
+          <tr><td>SUBTYPE</td><td>คอร์สหลัก = <strong>แพกเกจ</strong></td><td>Initial / package</td><td><code>INI</code></td></tr>
+          <tr><td>SUBTYPE</td><td>ตัวเสริม/อัพ = <strong>ซับแพกเกจ</strong></td><td>Option / subpackage</td><td><code>OPT</code></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.88rem;color:var(--ink-mid)">หมวด (CATEGORY) ฝั่ง SKN: <code>FIL</code> ฟิลเลอร์ · <code>BTX</code> โบท็อกซ์ · <code>EBD</code> เครื่องพลังงาน · <code>SKB</code> สกินบูสเตอร์ · <code>BIO</code> ไบโอ · <code>THR</code> ร้อยไหม · <code>MLZ</code> ฝ้า · <code>FAT</code> แฟต · <code>ACS</code> หลุมสิว · <code>GEN</code> สกินทั่วไป &nbsp;|&nbsp; ฝั่ง SUR: <code>NOSE</code> · <code>EYE</code> · <code>LIP</code> · <code>CHIN</code> · <code>FACFT</code> · <code>PTRYG</code></p>
+
+      <h2 id="added">4 · รหัสที่เพิ่งเพิ่ม (D5) — เทียบของเดิม ↔ ของใหม่</h2>
+
+      <h3>ซิลิโคนจมูก/คาง (OPT) — เปลี่ยนชื่อให้อ่านออกว่ายี่ห้ออะไร</h3>
+      <table>
+        <thead><tr><th>สถานะ</th><th>ชื่อไทย</th><th>English</th><th>รหัส (DIFFERENTIATOR)</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge removed">เดิม</span></td><td>ซิลิโคนมาตรฐาน</td><td>standard tier</td><td><code>SLSTD</code></td></tr>
+          <tr><td><span class="badge removed">เดิม</span></td><td>ซิลิโคนพรีเมียม</td><td>premium tier</td><td><code>SLPREM</code></td></tr>
+          <tr><td><span class="badge new">ใหม่</span></td><td>อัพซิลิโคน Beauty Device</td><td>Beauty Device (เกรดตั้งต้น)</td><td><code>BDEV</code></td></tr>
+          <tr><td><span class="badge new">ใหม่</span></td><td>อัพซิลิโคน Mantis/Keosan/Allied</td><td>Mantis-Keosan-Allied</td><td><code>MKA</code></td></tr>
+          <tr><td><span class="badge new">ใหม่</span></td><td>อัพซิลิโคน Implant Grade</td><td>Implant Grade</td><td><code>IMPL</code></td></tr>
+          <tr><td><span class="badge new">ใหม่</span></td><td>อัพเกรดซิลิโคนทั่วไป</td><td>generic upgrade</td><td><code>GEN</code></td></tr>
+        </tbody>
+      </table>
+      <blockquote style="font-size:.85rem">รูปเต็ม: <code>CRS-SUR-OPT-NOSE-BDEV-001-BASE</code> · 1 รหัส = 1 เกรด อยู่ช่องที่ 5 ไม่ปนกัน</blockquote>
+
+      <h3>สกินบูสเตอร์ (SKB) — แบรนด์ใหม่</h3>
+      <table>
+        <thead><tr><th>สถานะ</th><th>ชื่อไทย</th><th>English</th><th>รหัส</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge new">ใหม่</span></td><td>ไวทาแรน (1–4cc)</td><td>Vitaran</td><td><code>VTRN</code></td></tr>
+          <tr><td><span class="badge new">ใหม่</span></td><td>ดิววี่ โกลว์</td><td>Dewvy Glow</td><td><code>DEWV</code></td></tr>
+          <tr><td><span class="badge new">ใหม่</span></td><td>ยองโด คริสตัล โกลว์</td><td>Youngdo Crystal Glow</td><td><code>YCG</code></td></tr>
+          <tr><td><span class="badge new">ใหม่</span></td><td>มินิดอช หน้าใสฉ่ำวาว</td><td>mini-dose glow</td><td><code>MINID</code></td></tr>
+          <tr><td><span class="badge existing">เดิม</span></td><td>Glow Essence Celiine (รวม Meso Celine — ชื่อซ้ำ)</td><td>Glow Essence Celiine</td><td><code>GEC</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>หัตถการอื่นที่เพิ่ม</h3>
+      <table>
+        <thead><tr><th>ชื่อไทย</th><th>English</th><th>หมวด</th><th>รหัส</th></tr></thead>
+        <tbody>
+          <tr><td>โบท็อกซ์ HUGEL (50U)</td><td>HUGEL botox</td><td>BTX</td><td><code>HGL</code></td></tr>
+          <tr><td>Subcision ตัดผังผืดแผลเป็น</td><td>Subcision (plain)</td><td>ACS</td><td><code>SUBC</code></td></tr>
+          <tr><td>Subcision + สเต็มเซลล์</td><td>Subcision + stem cell</td><td>ACS</td><td><code>STEM</code></td></tr>
+          <tr><td>ร้อยไหม 2 / 6 เส้น</td><td>2 / 6 threads</td><td>THR</td><td><code>2T</code> · <code>6T</code></td></tr>
+          <tr><td>แฟต Bromi line 15/20/30cc</td><td>fat dissolve (Bromi)</td><td>FAT</td><td><code>15CC 20CC 30CC</code></td></tr>
+          <tr><td>แฟต Sisi body 35cc</td><td>fat dissolve (Sisi)</td><td>FAT</td><td><code>35CC</code></td></tr>
+          <tr><td>เรเดียส 1.5cc</td><td>Radiesse 1.5cc</td><td>BIO</td><td><code>1.5CC</code></td></tr>
+          <tr><td>Cef-3 + ยาแก้แพ้</td><td>Cef-3 + antihistamine</td><td>EXT</td><td><code>CFAH</code></td></tr>
+          <tr><td>ทรามาดอล ยาระงับปวด</td><td>Tramadol injection</td><td>EXT</td><td><code>TRAM</code></td></tr>
+          <tr><td>Hydex (ยาเบลอ)</td><td>Hydex sedation</td><td>EXT</td><td><code>HDEX</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>ตัดออก (เลิกขายแล้ว — verify จาก JERA จริง)</h3>
+      <p style="font-size:.88rem">
+        <span class="badge removed">ออก</span> <code>LMED</code> โปรแกรมสลายฝ้า · <code>40T</code> ไหม 40 เส้น · <code>0.5CC</code> Juvelook · <code>2.5CC</code> Hestina/Innoglossy · <code>4NDL</code> · <code>HGL 100U</code>
+        &nbsp;— ทั้งหมด <code>del_flag=true</code> หรือ <code>show_flag=false</code> = ไม่อยู่บนเมนูแล้ว
+      </p>
+
+      <h2 id="pkg">5 · ชั้น PKG ใหม่ — แคมเปญ / แพกเกจ / ซับแพกเกจ</h2>
+      <p>ของใหม่ล้วน — ชั้นบางๆที่ <strong>อ้างถึง</strong> รหัส CRS (ไม่ใช่ระบบขนาน):</p>
+      <pre><code>PKG-{GROUP}-{HOOK}-{C+YYMM}-{SET}          ← แพกเกจหลัก
+PKG-{GROUP}-{HOOK}-{C+YYMM}-{SET}-{UPGRADE} ← ซับแพกเกจ (อัพ)
+
+ตัวอย่าง: PKG-SKN-OLG-C2602-SETA-U400
+  SKN   = กลุ่ม (skin/surgery)
+  OLG   = HOOK สินค้าหลัก/ตัวดึงดูด
+  C2602 = แคมเปญ ปี2026 เดือน02 (C=campaign)
+  SETA  = ชื่อชุด (คนตั้งเอง)
+  U400  = อัพเป็นอะไร (ตั้งชื่อตามสิ่งที่อัพ)</code></pre>
+      <table>
+        <thead><tr><th>ระดับ</th><th>ชื่อไทย</th><th>English</th><th>map เป็น</th></tr></thead>
+        <tbody>
+          <tr><td>package</td><td>แพกเกจ (ชุดฐาน)</td><td>package</td><td><code>INI</code> course + PKG</td></tr>
+          <tr><td>subpackage</td><td>ตัวอัพเซลล์</td><td>subpackage</td><td><code>OPT</code> course + <code>-U…</code></td></tr>
+          <tr><td>campaign</td><td>แคมเปญลงวันที่</td><td>campaign</td><td><code>PKG-…-C2602</code></td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>อะไรอยู่ตรงไหน:</strong> ในรหัส = กลุ่ม·hook·เดือน·ชุด·อัพ &nbsp;|&nbsp; ในนิยาม (registry) = BOM ของแถม·ชื่อไทยเต็ม·เงื่อนไข &nbsp;|&nbsp; ใน transaction = ราคา·ส่วนต่าง·อัพที่ลูกค้าเลือก</div>
+
+      <h2 id="example">6 · ตัวอย่างจริง — แคมเปญ Oligio ก.พ. 2026</h2>
+      <p>1 แคมเปญ = 9 รหัส (6 ตัวสินค้า CRS ใช้ซ้ำได้ + 3 ตัวแคมเปญ PKG):</p>
+      <pre><code>▸ CRS — สินค้า (ถาวร ใช้ซ้ำข้ามแคมเปญ)
+CRS-SKN-INI-EBD-OLG-001-300SH   Oligio 300sh    หลัก (hook)
+CRS-SKN-INI-EBD-ULT-001-100SH   Ultraformer     แถม (BOM)
+CRS-SKN-INI-FAT-NEO-001-10CC    fat 10cc        แถม (BOM)
+CRS-VIT-INI-DRIP-GLT-001-1X     Gluta 1x        แถม (BOM)
+CRS-SKN-INI-EBD-OLG-001-400SH   Oligio 400sh    ของตัวอัพ
+CRS-SKN-INI-EBD-OLG-001-600SH   Oligio 600sh    ของตัวอัพ
+
+▸ PKG — แคมเปญเดือนนี้
+PKG-SKN-OLG-C2602-SETA          แพกเกจหลัก
+PKG-SKN-OLG-C2602-SETA-U400     ซับ: อัพ 400sh
+PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600sh
+
+นิยาม SETA: ชื่อ "โปรย้อนวัย" · BOM=ULT+FAT+GLT · อัพได้=U400,U600</code></pre>
+      <h3>Report ที่ทำได้ (query ตามตำแหน่ง)</h3>
+      <table>
+        <thead><tr><th>อยากรู้</th><th>query</th></tr></thead>
+        <tbody>
+          <tr><td>แพกเกจไหนขายดี</td><td><code>group by PKG-…-SETA</code></td></tr>
+          <tr><td>ตัวดึงดูด (hook) ที่เวิร์ก</td><td><code>PKG-%-OLG-%</code></td></tr>
+          <tr><td>journey อัพเซลล์ไหนขายดี</td><td>ฐาน → <code>-U400 / -U600</code></td></tr>
+          <tr><td>แคมเปญเดือน ก.พ.</td><td><code>PKG-%-C2602</code></td></tr>
+          <tr><td>ทั้งปี 2026</td><td><code>PKG-%-C26__</code></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="next">7 · ขั้นต่อไป (dev)</h2>
+      <p><strong>เครื่องมือ test-prompt / eval-harness</strong> (issue 8): ป้อน 485 คอร์สที่เคาะรหัสไว้แล้วเป็นเฉลย → ให้ parser สร้างรหัสกลับมา → ต้องตรงเป๊ะ = พิสูจน์ว่า logic เสถียร ไม่เพี้ยน แล้วค่อยปล่อยให้คีย์ของใหม่. จากนั้น <strong>Chrome extension</strong> สร้างแถวจริงใน JERA.</p>
+      <div class="nav-footer">
+        <span>GENCODE changes guide · draft v0.1</span>
+        <span>🤖 GLUEBOY · 2026-06-06</span>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+const links=[...document.querySelectorAll('.sidebar a[href^="#"]')];
+const map=links.map(a=>({a,el:document.getElementById(a.getAttribute('href').slice(1))})).filter(x=>x.el);
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const m=map.find(x=>x.el===e.target);if(m)m.a.classList.add('active');}});},{rootMargin:'-20% 0px -70% 0px'});
+map.forEach(x=>obs.observe(x.el));
+links.forEach(a=>a.addEventListener('click',()=>document.querySelector('.sidebar').classList.remove('open')));
+</script>
+<script>
+(function(){var KEY='gencode_auth',EXP='YXJyYW9yYWNsZTpvcmFjbGVAMjAyNg==';
+function unlock(){document.body.classList.remove('locked');var g=document.getElementById('gate');if(g)g.style.display='none';}
+if(sessionStorage.getItem(KEY)===EXP){unlock();}
+var f=document.getElementById('gate-form');if(f){f.addEventListener('submit',function(e){e.preventDefault();var t=btoa(document.getElementById('gu').value.trim()+':'+document.getElementById('gp').value);if(t===EXP){sessionStorage.setItem(KEY,t);unlock();}else{document.getElementById('ge').style.display='block';}});}
+})();
+</script>
+</body>
+</html>
