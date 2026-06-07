@@ -111,7 +111,7 @@ body.locked .mobile-toggle{display:none}
       <a href="#maplogic">10 · Map Logic (ชื่อ→รหัส) ✓</a>
       <a href="#next">11 · ขั้นต่อไป</a>
     </nav>
-    <div class="sidebar-section" style="margin-top:auto">draft v0.4 · 2026-06-07</div>
+    <div class="sidebar-section" style="margin-top:auto">draft v0.5 · 2026-06-07</div>
   </aside>
 
   <main class="reader" id="top">
@@ -447,6 +447,16 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600sh
 
       <h3>Process ② — flag-don't-merge (รู้ตัวเมื่อไม่แน่ใจ)</h3>
       <div class="callout"><strong>ระบบไม่เดามั่ว:</strong> ชื่อใหม่ที่ registry ไม่รู้จัก หรือก้ำกึ่งระหว่าง 2 token → <strong>หยุด ⚑ flag ถามคน</strong> → คนยืนยัน 1 ครั้ง → ระบบจำเป็น <em>alias</em> (ครั้งหน้าไม่ต้องถาม). ของที่ไม่ชัวร์จะไม่ถูกใส่รหัสผิดลงฐาน</div>
+
+      <h3>Process ③ — assist: ชื่อที่ flag <span class="badge new">ใหม่</span></h3>
+      <p>พอ parser <strong>flag</strong> ไม่ใช่ทางตัน — มีทางช่วยต่อ ให้คนไม่ต้องแมปทุกตัว (3 ชั้น):</p>
+      <pre><code>1. มี alias ที่เคยยืนยัน?  → ใช้เลย (ลัด)
+2. ไม่มี → parser ตอบได้?  → ใช้ (เส้น 307/307 เดิม ไม่แตะ)
+3. flag                  → เสนอ token ให้คนเลือก/ยืนยัน
+                           ยืนยัน 1 ครั้ง → จำเป็น alias → ครั้งหน้าเข้าชั้น 1 เลย</code></pre>
+      <div class="callout"><strong>ตัวเสนอ (proposer):</strong> <strong>fuzzy</strong> วัดความใกล้ตัวอักษร (เช่น "Restilane" ≈ Restylane → เสนอ <code>RST</code>) เป็นตัวหลักที่รันได้เลย &nbsp;·&nbsp; <strong>+ ช่อง LLM เสียบได้</strong> (ใส่ Anthropic key ทีหลัง). <strong>deterministic ยังเป็นตัวหลัก</strong> — fuzzy/LLM แค่ช่วยส่วนหาง · <em>คน</em>ยืนยันก่อนจำเสมอ (ไม่ auto)</div>
+      <blockquote style="font-size:.85rem">3 ไฟล์ใหม่: <code>alias.ts</code> (คลังจำ name→token · append-only) · <code>assist.ts</code> (fuzzy + ช่อง LLM) · <code>resolve.ts</code> (คุม flow · ห่อ parser ไม่แก้) — <span class="badge existing">YD_GENCODE PR 24</span> · parser เดิมไม่แตะ ยัง 307/307</blockquote>
+
       <h3>โครงสร้างไฟล์ — <code>YD_GENCODE/mapper/</code> (PR 22)</h3>
       <p>โค้ดทั้งหมด ~1,450 บรรทัด · เป็น pure function · <strong>ไม่มี dependency ภายนอก</strong> (bun รันได้เลย ไม่ต้อง <code>npm install</code>):</p>
       <pre><code>mapper/
@@ -467,9 +477,12 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600sh
 │   ├── eval-skin.ts      ตรวจ skin → report-skin.html
 │   └── encode.ts         CLI ลองทีละชื่อ
 │
-├── test/                 ✅ เทสต์ (bun test · 16 ตัว)
+├── src/ (+assist)        alias.ts · assist.ts · resolve.ts  (LLM-assist scaffold, PR 24)
+│
+├── test/                 ✅ เทสต์ (bun test · 22 ตัว)
 │   ├── engine.test.ts    round-trip + reject ของเก่า 8 ช่อง
-│   └── parser.test.ts    100% gold (SUR+skin) + flag-gate
+│   ├── parser.test.ts    100% gold (SUR+skin) + flag-gate
+│   └── assist.test.ts    alias + fuzzy proposer + resolve flow
 │
 └── data/                 📂 "เฉลย" (gold)
     └── gold-skin.tsv     เฉลย 234 หัตถการ skin (จาก crosswalk)</code></pre>
@@ -483,16 +496,28 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600sh
       </table>
       <div class="callout"><strong>หลักจัดโครง:</strong> ① ไม่มี dependency — bun รัน TS + เทสต์ได้เลย (เบา พกพาง่าย) &nbsp;·&nbsp; ② แยก <em>"ความรู้"</em> (registry / data) ออกจาก <em>"logic"</em> (parser / engine) — เพิ่มแบรนด์/หัตถการใหม่ = แก้แค่ registry ไม่ต้องแตะ logic &nbsp;·&nbsp; ③ report html = ของ generate (ไม่ commit) → รัน eval ใหม่ได้ของสดเสมอ</div>
 
-      <h2 id="next">11 · ขั้นต่อไป (dev)</h2>
-      <p><span class="badge existing">เสร็จแล้ว</span> map-logic + eval-harness (ข้อ 10) = 307/307. <strong>เหลือ:</strong></p>
+      <h2 id="next">11 · สถานะ + ขั้นต่อไป (progress)</h2>
+      <p><strong>สถานะล่าสุด</strong> — อัปเดต 2026-06-07:</p>
+      <table>
+        <thead><tr><th>ส่วน</th><th>สถานะ</th><th>ที่</th></tr></thead>
+        <tbody>
+          <tr><td>map-logic + eval-harness (307/307)</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE PR 22</td></tr>
+          <tr><td>guide ทีม + PKG draft</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE PR 17</td></tr>
+          <tr><td>crosswalk CRS v2</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE PR 14</td></tr>
+          <tr><td>LLM-assist scaffold (alias + fuzzy)</td><td><span class="badge new">PR · รอ merge</span></td><td>YD_GENCODE PR 24</td></tr>
+          <tr><td>พอร์ตเข้า glyph (engine จริง)</td><td><span class="badge new">PR · รอพี่แอมแป</span></td><td>glyph-oracle PR 340</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>glyph PR 340</strong> = เอา logic ที่พิสูจน์แล้ว (307/307) ใส่ glyph เป็น <strong>module เพิ่ม</strong> — รัน 307/307 ได้ในglyph จริง · <strong>ไม่แตะ engine เดิม</strong> · <strong>flag ส่วน migrate engine 8→7 + แก้ schema DB ไว้ให้พี่แอมแป</strong> ตัดสิน (ไม่เดา)</div>
+      <p><strong>เหลือ:</strong></p>
       <ul>
-        <li><strong>LLM ช่วยตอน flag</strong> — ชื่อแปลก/ใหม่ที่ registry ไม่ชัวร์ → LLM เสนอ token → คนยืนยัน → จำเป็น alias (deterministic ยังเป็นตัวหลัก)</li>
-        <li><strong>พอร์ตเข้า engine จริง (glyph)</strong> — migrate engine 8→7 ช่อง + scheme B + แก้ schema + ต่อ parser เข้าระบบสร้างรหัสจริง</li>
-        <li><strong>Ratify รหัส low-confidence</strong> (34 ตัว) + ทำ crosswalk CRS/SVC ให้ครบ + ใส่ชั้น PKG ใน engine</li>
+        <li><strong>ต่อ LLM จริง</strong> (เติม Anthropic call ใน <code>llmProposer</code>) + UI ให้คนกดยืนยันข้อเสนอ</li>
+        <li><strong>glyph: migrate engine 8→7 + scheme B + schema + ต่อ parser เข้า encode route</strong> (พี่แอมแป — เจ้าของ DB/engine)</li>
+        <li><strong>Ratify รหัส low-confidence</strong> (34 ตัว) + crosswalk CRS/SVC ให้ครบ + ชั้น PKG ใน engine</li>
         <li><strong>Chrome extension</strong> — แปลงดีไซน์ GENCODE → สร้างแถวจริงใน JERA</li>
       </ul>
       <div class="nav-footer">
-        <span>GENCODE changes guide · draft v0.4</span>
+        <span>GENCODE changes guide · draft v0.5</span>
         <span>🤖 GLUEBOY · 2026-06-07</span>
       </div>
     </div>
