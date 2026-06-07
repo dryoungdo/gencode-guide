@@ -108,15 +108,16 @@ body.locked .mobile-toggle{display:none}
       <a href="#pkg">7 · ชั้น PKG (แพกเกจ)</a>
       <a href="#journey">8 · UX/UI Journey</a>
       <a href="#example">9 · ตัวอย่างจริง</a>
-      <a href="#next">10 · ขั้นต่อไป</a>
+      <a href="#maplogic">10 · Map Logic (ชื่อ→รหัส) ✓</a>
+      <a href="#next">11 · ขั้นต่อไป</a>
     </nav>
-    <div class="sidebar-section" style="margin-top:auto">draft v0.1 · 2026-06-06</div>
+    <div class="sidebar-section" style="margin-top:auto">draft v0.2 · 2026-06-07</div>
   </aside>
 
   <main class="reader" id="top">
     <div class="topbar">
       <span class="topbar-title">GENCODE — สรุปการเปลี่ยนแปลง (สำหรับทีม)</span>
-      <span class="topbar-date">2026-06-06</span>
+      <span class="topbar-date">2026-06-07</span>
     </div>
     <div class="content-shell">
       <h1>GENCODE — สรุปการเปลี่ยนแปลง</h1>
@@ -380,11 +381,70 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600sh
         </tbody>
       </table>
 
-      <h2 id="next">10 · ขั้นต่อไป (dev)</h2>
-      <p><strong>เครื่องมือ test-prompt / eval-harness</strong> (issue 8): ป้อน 485 คอร์สที่เคาะรหัสไว้แล้วเป็นเฉลย → ให้ parser สร้างรหัสกลับมา → ต้องตรงเป๊ะ = พิสูจน์ว่า logic เสถียร ไม่เพี้ยน แล้วค่อยปล่อยให้คีย์ของใหม่. จากนั้น <strong>Chrome extension</strong> สร้างแถวจริงใน JERA.</p>
+      <h2 id="maplogic">10 · Map Logic — เครื่องแปลงชื่อไทย → รหัส <span class="badge existing">สร้างแล้ว ✓</span></h2>
+      <p>นี่คือ "สมอง" ที่ทำให้ทีม <strong>คีย์คอร์สใหม่ได้เอง</strong> โดยไม่ต้องให้ Dr.Do แมปทีละตัว — พิมพ์ชื่อไทย → ได้รหัส GENCODE อัตโนมัติ และถ้าไม่แน่ใจมัน <strong>หยุดถาม</strong> ไม่เดามั่ว</p>
+      <div class="callout"><strong>สร้าง + พิสูจน์ในรีโป YD_GENCODE ก่อน</strong> (เป็น pure function รันได้เลย ไม่ต้องต่อ DB) แล้วค่อยพอร์ตเข้า engine จริง (glyph) — ปลอดภัย ไม่เสี่ยง production · เห็นผลทันที</div>
+
+      <h3>Logic — ชื่อไทยกลายเป็นรหัสยังไง (flow)</h3>
+      <pre><code>ชื่อไทย ──► parser ──► CRS-{TYPE}-{SUB}-{CAT}-{DIFFERENTIATOR}-{SEQ}-{VARIANT}
+
+wizard เก็บ context (user เลือก):
+  แผนก(TYPE) · หมวด(CAT) · หลัก-เสริม(SUBTYPE) · หมอ(เฉพาะศัลย์)
+ชื่อหัตถการ (พิมพ์) ──┐
+                     ▼
+1  registry    ดึง list token + keyword ของหมวดนั้น
+2  matchToken  จับคู่ keyword → priority สูงก่อน → คำยาวสุด → ได้ token (ช่อง 5)
+                 └ ไม่เจอ / ก้ำกึ่ง → ⚑ FLAG ถามคน (ไม่เดา)
+3  seqOf       มีคำ "ไม่รีวิว"? → 002 · ไม่งั้น → 001 (ช่อง 6)
+4  variant     ช่อง 7:  ศัลย์ = หมอ · สกิน = ดึงปริมาณจากชื่อ (100U / 2CC / 300S …)
+5  assemble    ประกอบ 7 ช่อง → รหัส ✓</code></pre>
+
+      <h3>ตัวอย่างจริง (2 เคส)</h3>
+      <pre><code>"โบท็อกซ์ แอลเลอร์แกน 100 ยูนิต"   (สกิน / BTX / หลัก)
+   → แบรนด์ ALG  +  ปริมาณ 100U
+   → CRS-SKN-INI-BTX-ALG-001-100U ✓
+
+"เสริมจมูกใหม่ เซมิโอเพ่น"          (ศัลย์ / NOSE / หลัก / หมอ Do)
+   → เทคนิค SEMI (priority ชนะ OPEN ที่ก็ตรงคำว่า "โอเพ่น" เหมือนกัน)
+   → หมอ = DRDO (ช่อง 7)
+   → CRS-SUR-INI-NOSE-SEMI-001-DRDO ✓</code></pre>
+
+      <h3>ความต่าง ศัลย์ vs สกิน</h3>
+      <table>
+        <thead><tr><th></th><th>ช่อง 5 (ตัวแยก)</th><th>ช่อง 7 (variant)</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ศัลย์</strong></td><td>เทคนิค / ตำแหน่ง</td><td>หมอ (เลือกตอนสร้าง)</td></tr>
+          <tr><td><strong>สกิน</strong></td><td>แบรนด์ / เครื่อง / โซน</td><td>ปริมาณ (ดึงจากชื่อ)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Process ① — eval-harness (เครื่องพิสูจน์ความเสถียร)</h3>
+      <p>หัวใจที่ทำให้เชื่อถือได้: ป้อน <strong>"เฉลย"</strong> (รหัสที่ verify มือไว้แล้ว) → ให้ parser สร้างรหัสกลับมา → ต้องตรงเป๊ะทุกตัว = พิสูจน์ว่า logic เสถียร ไม่เพี้ยน</p>
+      <table>
+        <thead><tr><th>layer</th><th>เฉลย (gold)</th><th>จำนวน</th><th>ผล</th></tr></thead>
+        <tbody>
+          <tr><td>ศัลยกรรม (SUR)</td><td>SUR-PROCEDURE-MAP (0 collision)</td><td>73</td><td><span class="badge existing">73/73 ✓</span></td></tr>
+          <tr><td>สกิน / ทรีท / วิต / อื่นๆ</td><td>crosswalk (high-confidence)</td><td>234</td><td><span class="badge existing">234/234 ✓</span></td></tr>
+          <tr><td><strong>รวม</strong></td><td></td><td><strong>307</strong></td><td><span class="badge existing">307/307 = 100% ✓</span></td></tr>
+        </tbody>
+      </table>
+      <blockquote style="font-size:.85rem">+ unit tests 16 ตัวผ่านหมด · 0 error · รัน <code>bun run src/eval.ts</code> → ออกเป็นหน้า report ดูผลทีละหัตถการได้</blockquote>
+
+      <h3>Process ② — flag-don't-merge (รู้ตัวเมื่อไม่แน่ใจ)</h3>
+      <div class="callout"><strong>ระบบไม่เดามั่ว:</strong> ชื่อใหม่ที่ registry ไม่รู้จัก หรือก้ำกึ่งระหว่าง 2 token → <strong>หยุด ⚑ flag ถามคน</strong> → คนยืนยัน 1 ครั้ง → ระบบจำเป็น <em>alias</em> (ครั้งหน้าไม่ต้องถาม). ของที่ไม่ชัวร์จะไม่ถูกใส่รหัสผิดลงฐาน</div>
+      <blockquote style="font-size:.85rem">โค้ดทั้งหมดอยู่ที่ <code>YD_GENCODE/mapper/</code> (PR 22) — engine / match / registry / variant / parser / eval / encode (CLI ลองทีละชื่อ)</blockquote>
+
+      <h2 id="next">11 · ขั้นต่อไป (dev)</h2>
+      <p><span class="badge existing">เสร็จแล้ว</span> map-logic + eval-harness (ข้อ 10) = 307/307. <strong>เหลือ:</strong></p>
+      <ul>
+        <li><strong>LLM ช่วยตอน flag</strong> — ชื่อแปลก/ใหม่ที่ registry ไม่ชัวร์ → LLM เสนอ token → คนยืนยัน → จำเป็น alias (deterministic ยังเป็นตัวหลัก)</li>
+        <li><strong>พอร์ตเข้า engine จริง (glyph)</strong> — migrate engine 8→7 ช่อง + scheme B + แก้ schema + ต่อ parser เข้าระบบสร้างรหัสจริง</li>
+        <li><strong>Ratify รหัส low-confidence</strong> (34 ตัว) + ทำ crosswalk CRS/SVC ให้ครบ + ใส่ชั้น PKG ใน engine</li>
+        <li><strong>Chrome extension</strong> — แปลงดีไซน์ GENCODE → สร้างแถวจริงใน JERA</li>
+      </ul>
       <div class="nav-footer">
-        <span>GENCODE changes guide · draft v0.1</span>
-        <span>🤖 GLUEBOY · 2026-06-06</span>
+        <span>GENCODE changes guide · draft v0.2</span>
+        <span>🤖 GLUEBOY · 2026-06-07</span>
       </div>
     </div>
   </main>
