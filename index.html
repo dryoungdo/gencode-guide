@@ -111,7 +111,7 @@ body.locked .mobile-toggle{display:none}
       <a href="#maplogic">10 · Map Logic (ชื่อ→รหัส) ✓</a>
       <a href="#next">11 · ขั้นต่อไป</a>
     </nav>
-    <div class="sidebar-section" style="margin-top:auto">draft v0.2 · 2026-06-07</div>
+    <div class="sidebar-section" style="margin-top:auto">draft v0.3 · 2026-06-07</div>
   </aside>
 
   <main class="reader" id="top">
@@ -432,7 +432,41 @@ wizard เก็บ context (user เลือก):
 
       <h3>Process ② — flag-don't-merge (รู้ตัวเมื่อไม่แน่ใจ)</h3>
       <div class="callout"><strong>ระบบไม่เดามั่ว:</strong> ชื่อใหม่ที่ registry ไม่รู้จัก หรือก้ำกึ่งระหว่าง 2 token → <strong>หยุด ⚑ flag ถามคน</strong> → คนยืนยัน 1 ครั้ง → ระบบจำเป็น <em>alias</em> (ครั้งหน้าไม่ต้องถาม). ของที่ไม่ชัวร์จะไม่ถูกใส่รหัสผิดลงฐาน</div>
-      <blockquote style="font-size:.85rem">โค้ดทั้งหมดอยู่ที่ <code>YD_GENCODE/mapper/</code> (PR 22) — engine / match / registry / variant / parser / eval / encode (CLI ลองทีละชื่อ)</blockquote>
+      <h3>โครงสร้างไฟล์ — <code>YD_GENCODE/mapper/</code> (PR 22)</h3>
+      <p>โค้ดทั้งหมด ~1,450 บรรทัด · เป็น pure function · <strong>ไม่มี dependency ภายนอก</strong> (bun รันได้เลย ไม่ต้อง <code>npm install</code>):</p>
+      <pre><code>mapper/
+├── package.json          config — วิธีรัน (bun) + ชื่อ script
+├── tsconfig.json         config — ตั้งค่า TypeScript (strict)
+├── .gitignore            config — ไม่เก็บไฟล์ที่ generate (report.html)
+├── README.md             doc    — วิธีรัน + ผล + ลิสต์ไฟล์
+│
+├── src/                  🧠 โค้ดหลัก
+│   ├── types.ts          พิมพ์เขียวข้อมูล (CrsSegments / ParseResult)
+│   ├── engine.ts         ประกอบ/ถอด code 7 ช่อง
+│   ├── match.ts          จับคู่คำ (ใช้ร่วม SUR + skin)
+│   ├── registry.ts       พจนานุกรม SUR (เทคนิคศัลย์)
+│   ├── registry-skin.ts  พจนานุกรม skin (แบรนด์/เครื่อง/โซน)
+│   ├── variant.ts        ดึงปริมาณ ช่อง 7 (cc/ยูนิต/ช็อต…)
+│   ├── parser.ts    ⭐   สมอง (map logic + flag-gate)
+│   ├── eval.ts           ตรวจ SUR  → report.html
+│   ├── eval-skin.ts      ตรวจ skin → report-skin.html
+│   └── encode.ts         CLI ลองทีละชื่อ
+│
+├── test/                 ✅ เทสต์ (bun test · 16 ตัว)
+│   ├── engine.test.ts    round-trip + reject ของเก่า 8 ช่อง
+│   └── parser.test.ts    100% gold (SUR+skin) + flag-gate
+│
+└── data/                 📂 "เฉลย" (gold)
+    └── gold-skin.tsv     เฉลย 234 หัตถการ skin (จาก crosswalk)</code></pre>
+      <table>
+        <thead><tr><th>folder</th><th>หน้าที่</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/</code></td><td>โค้ดที่ทำงานจริง — logic ทั้งหมด</td></tr>
+          <tr><td><code>test/</code></td><td>เทสต์อัตโนมัติ — <code>bun test</code> พิสูจน์ว่า logic ยังถูก</td></tr>
+          <tr><td><code>data/</code></td><td>"เฉลย" ที่ใช้เทียบ (ไม่ใช่โค้ด) · SUR gold อ่านจาก <code>SUR-PROCEDURE-MAP.md</code> ที่รากรีโปตรงๆ</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>หลักจัดโครง:</strong> ① ไม่มี dependency — bun รัน TS + เทสต์ได้เลย (เบา พกพาง่าย) &nbsp;·&nbsp; ② แยก <em>"ความรู้"</em> (registry / data) ออกจาก <em>"logic"</em> (parser / engine) — เพิ่มแบรนด์/หัตถการใหม่ = แก้แค่ registry ไม่ต้องแตะ logic &nbsp;·&nbsp; ③ report html = ของ generate (ไม่ commit) → รัน eval ใหม่ได้ของสดเสมอ</div>
 
       <h2 id="next">11 · ขั้นต่อไป (dev)</h2>
       <p><span class="badge existing">เสร็จแล้ว</span> map-logic + eval-harness (ข้อ 10) = 307/307. <strong>เหลือ:</strong></p>
@@ -443,7 +477,7 @@ wizard เก็บ context (user เลือก):
         <li><strong>Chrome extension</strong> — แปลงดีไซน์ GENCODE → สร้างแถวจริงใน JERA</li>
       </ul>
       <div class="nav-footer">
-        <span>GENCODE changes guide · draft v0.2</span>
+        <span>GENCODE changes guide · draft v0.3</span>
         <span>🤖 GLUEBOY · 2026-06-07</span>
       </div>
     </div>
