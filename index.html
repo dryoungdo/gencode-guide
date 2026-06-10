@@ -111,7 +111,8 @@ body.locked .mobile-toggle{display:none}
       <a href="#journey">10 · UX/UI Journey</a>
       <a href="#example">11 · ตัวอย่างจริง</a>
       <a href="#maplogic">12 · Map Logic (ชื่อ→รหัส) ✓</a>
-      <a href="#next">13 · ขั้นต่อไป</a>
+      <a href="#uxspec">13 · UX/UI Spec สำหรับ Pym</a>
+      <a href="#next">14 · ขั้นต่อไป</a>
     </nav>
     <div class="sidebar-section" style="margin-top:auto">v3.9 · 2026-06-09</div>
   </aside>
@@ -543,7 +544,109 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600 shots
       </table>
       <div class="callout"><strong>หลักจัดโครง:</strong> ① ไม่มี dependency — bun รัน TS + เทสต์ได้เลย (เบา พกพาง่าย) &nbsp;·&nbsp; ② แยก <em>"ความรู้"</em> (registry / data) ออกจาก <em>"logic"</em> (parser / engine) — เพิ่มแบรนด์/หัตถการใหม่ = แก้แค่ registry ไม่ต้องแตะ logic &nbsp;·&nbsp; ③ report html = ของ generate (ไม่ commit) → รัน eval ใหม่ได้ของสดเสมอ</div>
 
-      <h2 id="next">13 · สถานะ + ขั้นต่อไป (progress)</h2>
+      <h2 id="uxspec">13 · UX/UI Spec สำหรับ Pym <span class="badge new">DRAFT v0.1</span></h2>
+      <p class="lead"><strong>DRAFT v0.1 — for owner + Pym review.</strong> หัวข้อนี้เป็น <strong>requirements spec</strong> ว่า UI ที่ขับด้วย GENCODE ต้องทำอะไรบ้าง ไม่ใช่ mockup และไม่ใช่ visual direction. Pym ออกแบบ flow, screen, interaction detail, และ visual hierarchy ได้เต็มที่ภายใต้โครง GENCODE ที่ fixed แล้ว</p>
+      <div class="callout"><strong>Source of truth:</strong> โครงรหัสและตัวอย่างในสเปกนี้อ้างจาก <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/blob/main/CRS-CODE.md">YD_GENCODE/CRS-CODE.md v3.9</a>, <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/blob/main/README.md">README layer summary</a>, <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/blob/main/CRS-SEGMENT-PROFILE-REGISTRY.md">segment-profile registry</a>, และ <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/tree/main/mapper">mapper/</a> ที่ทดสอบชื่อไทย → GENCODE ได้ 307/307 gold. หน้านี้ชี้ไปที่ catalog ไม่คัดลอก token list เต็ม เพื่อกัน drift</div>
+
+      <h3>ขอบเขตที่ fixed vs สิ่งที่ Pym ออกแบบได้</h3>
+      <table>
+        <thead><tr><th>Fixed by GENCODE</th><th>Pym designs</th></tr></thead>
+        <tbody>
+          <tr><td>CRS เป็น 7 segments เสมอ: <code>CRS-{TYPE}-{SUBTYPE}-{CATEGORY}-{DIFFERENTIATOR}-{SEQ}-{VARIANT}</code> และมี <code>-{VERSION}</code> เฉพาะ duplicate ที่เก็บไว้</td><td>จะพาผู้ใช้ผ่านกี่หน้าจอ, ใช้ search-first หรือ wizard-first, และจัดลำดับ field บนหน้าจออย่างไร</td></tr>
+          <tr><td>สามชั้นหลักยังแยกหน้าที่: <strong>CRS</strong> = สิ่งที่ลูกค้าซื้อ, <strong>SVC</strong> = สิ่งที่ทำจริง, <strong>PRD</strong> = ของ/สต็อกที่ใช้</td><td>จะโชว์ layer ไหนใน order-entry, breakdown, drawer, หรือ review step แบบไหนให้ทีมเข้าใจง่าย</td></tr>
+          <tr><td>Scheme B สำหรับ SUR: ช่อง 5 = technique/part, ช่อง 7 = doctor. ตัวอย่าง verified: <code>CRS-SUR-INI-NOSE-SEMI-001-DRDO</code></td><td>วิธีให้เลือกหมอ, วิธีอธิบายความต่าง surgery vs skin, และวิธีลดความสับสนของ operator</td></tr>
+          <tr><td>mapper ต้อง flag เมื่อไม่รู้หรือกำกวม. Low confidence ห้าม auto-write ลง catalog</td><td>รูปแบบ review/confirm, microcopy, severity, และวิธีส่งงานให้ owner ratify</td></tr>
+          <tr><td>ราคา, แคมเปญ, cashier, branch, และ transaction fact ไม่ใช่โครง CRS catalog code</td><td>จะวาง price/campaign fields ใกล้ code breakdown แค่ไหน เพื่อให้ทีมเห็นว่าเป็น sales-order data ไม่ใช่ segment ใหม่</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Surface ① — Thai name → GENCODE search</h3>
+      <p>นี่คือ core surface สำหรับ operator: พิมพ์หรือค้นชื่อบริการภาษาไทย แล้วระบบคืนรหัส GENCODE พร้อมสถานะความมั่นใจ ก่อนให้ผู้ใช้ยืนยัน</p>
+      <pre><code>Input:
+  Thai service/course name
+  required context: TYPE, CATEGORY, SUBTYPE
+  surgery-only context: DOCTOR
+
+Mapper output:
+  code / segments / matched token / confidence / flagged / reason / candidates
+
+Decision:
+  high confidence + not flagged  → operator confirms → usable code
+  low or none + flagged          → stop → human picks/ratifies → save alias only after confirmation</code></pre>
+      <table>
+        <thead><tr><th>State</th><th>Requirement</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Exact/high confidence</td><td>Show the generated code, matched segment labels, and a clear confirm action. Example verified by mapper tests: <code>CRS-SKN-INI-BTX-ALG-001-100U</code> for Allergan botox 100 units</td><td>Operator should trust but still see what the parser did before order/catalog write</td></tr>
+          <tr><td>Ambiguous/low confidence</td><td>Show that the mapper found competing candidates. Require a human choice; do not silently prefer one token just because it can assemble a code</td><td>The matcher intentionally reports true ties as ambiguous, because wrong codes are harder to clean later</td></tr>
+          <tr><td>No match</td><td>Show the reason, preserve the typed name, and offer the code-builder path or an owner-ratification queue</td><td>Unknown brand/procedure must become a reviewed alias or catalog gap, not an invented code</td></tr>
+          <tr><td>Confirmed alias</td><td>Once owner/authorized user confirms, store name → token as an alias so the same spelling resolves automatically next time</td><td>The assist flow is confirm-once, remember-after; deterministic parser stays the trust anchor</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>Low-confidence rule:</strong> UI must stop before write. It may suggest candidates, but the action is <em>review / choose / ratify</em>, not auto-save. The visible status should make the next owner action obvious: confirm existing token, open code-builder, or mark a YD_GENCODE gap</div>
+
+      <h3>Surface ② — Cascading code-builder</h3>
+      <p>ใช้เมื่อ name-search flag, เมื่อสร้าง catalog item ใหม่, หรือเมื่อ operator รู้ segment ที่ต้องการมากกว่าชื่อไทย. Builder ไม่ใช่ token catalog copy; มันควรดึง allowed values จาก registry/source จริง</p>
+      <pre><code>TYPE
+  → SUBTYPE
+    → CATEGORY
+      → DIFFERENTIATOR
+        → SEQ
+          → VARIANT
+            → optional VERSION only if duplicate policy says keep</code></pre>
+      <table>
+        <thead><tr><th>Step</th><th>Requirement</th></tr></thead>
+        <tbody>
+          <tr><td><code>TYPE</code></td><td>เลือก department/business unit ก่อน เช่น SUR/SKN/VIT/TRT/MSC; downstream choices filter immediately</td></tr>
+          <tr><td><code>SUBTYPE</code></td><td>เลือก role ของคอร์ส เช่น INI/OPT/WAR ตาม source. ถ้า engine integration ยังไม่รองรับค่าใด ต้องแสดงเป็น implementation gap ไม่ใช่ซ่อนใน UI</td></tr>
+          <tr><td><code>CATEGORY</code></td><td>เลือกหมวดจาก TYPE ที่เลือก. UI ต้อง point to YD_GENCODE catalog แทนการฝัง list ถาวรในหน้า design</td></tr>
+          <tr><td><code>DIFFERENTIATOR</code></td><td>ความหมายขึ้นกับ category profile. สำหรับ SUR = technique/part; สำหรับ skin/device หลายหมวด = brand/device/area/method</td></tr>
+          <tr><td><code>SEQ</code></td><td>เลือก review status: <code>001</code> review, <code>002</code> not-review. UI ต้องไม่สับสนกับ optional VERSION</td></tr>
+          <tr><td><code>VARIANT</code></td><td>สำหรับ SUR = doctor; สำหรับ non-SUR = amount เช่น cc/units/shots/sessions ตาม profile</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>Builder feedback:</strong> ระหว่างเลือก ให้แสดง code preview แบบโตทีละ segment และแสดง human-readable breakdown ข้างกัน. ถ้าเลือก combination ที่ registry ไม่มี ให้ flag เป็น "needs ratification" ไม่ให้สร้าง token ใหม่เอง</div>
+
+      <h3>Surface ③ — Order-entry flow + validation</h3>
+      <p>Order-entry ต้องช่วยทีมเลือกสิ่งที่จะขายโดยไม่ปน catalog identity กับ transaction facts. การสร้างหรือเลือก code ควรจบด้วย validation + breakdown ก่อนบันทึก order</p>
+      <pre><code>1. Start order
+2. Search Thai name or open code-builder
+3. Select/confirm CRS code
+4. Validate: exists, active, source-backed, non-flagged, duplicate policy resolved
+5. Show code breakdown in human terms
+6. Add sales-order facts: price, campaign, branch, cashier, customer, payment, notes
+7. Save order with CRS reference; SVC/PRD detail remains separate by layer</code></pre>
+      <table>
+        <thead><tr><th>Validation</th><th>Required behavior</th></tr></thead>
+        <tbody>
+          <tr><td>Source-backed code</td><td>Every displayed code must resolve to YD_GENCODE mapper/spec. If not, show "gap for ratification" and block normal save</td></tr>
+          <tr><td>Duplicate/collision</td><td>If generated code already exists with different price/details, ask keep vs error. Keep appends <code>VERSION</code>; error path soft-deletes/replaces per policy</td></tr>
+          <tr><td>Active status</td><td>Inactive/soft-deleted codes can be shown for audit, but require explicit override or cannot be selected for a new order depending on owner policy</td></tr>
+          <tr><td>Layer boundary</td><td>Price/campaign/reviewable sales context must be shown as order fields unless the fixed CRS spec says it is a segment. Do not let screen design imply a new segment</td></tr>
+          <tr><td>Breakdown view</td><td>Always read the code back: prefix, type, subtype, category, differentiator, seq, variant, optional version, plus source/flag status</td></tr>
+        </tbody>
+      </table>
+      <h3>Code-breakdown requirements</h3>
+      <p>Breakdown is the trust surface. It lets an operator see that the code means what they are about to sell, and it gives reviewer/owner a compact audit target</p>
+      <pre><code>Example breakdown source: CRS-CODE.md v3.9
+CRS-SKN-INI-FIL-RST-001-4CC
+  CRS  = course
+  SKN  = skin
+  INI  = initial/main course
+  FIL  = filler
+  RST  = Restylane differentiator
+  001  = review
+  4CC  = 4cc variant</code></pre>
+      <div class="callout"><strong>Design intent:</strong> Pym can decide whether this appears as a panel, drawer, review step, or inline inspector. The requirement is that the operator can inspect the generated code before save, and flagged/low-confidence cases cannot look visually equivalent to verified cases</div>
+
+      <h3>Open review points for owner + Pym</h3>
+      <ul>
+        <li>Who is allowed to ratify a flagged token or alias: owner only, manager, or selected operator role?</li>
+        <li>Should order-entry default to name-search first, or should high-risk categories like SUR start with builder context first?</li>
+        <li>Where should the review queue live: inline in order-entry, a separate catalog admin surface, or both?</li>
+        <li>How much source detail should operator UI show: source path only, source version, or full audit trail?</li>
+      </ul>
+
+      <h2 id="next">14 · สถานะ + ขั้นต่อไป (progress)</h2>
       <p><strong>สถานะล่าสุด</strong> — อัปเดต 2026-06-09:</p>
       <table>
         <thead><tr><th>ส่วน</th><th>สถานะ</th><th>ที่</th></tr></thead>
