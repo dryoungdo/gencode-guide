@@ -114,13 +114,13 @@ body.locked .mobile-toggle{display:none}
       <a href="#uxspec">13 · UX/UI Spec สำหรับ Pym</a>
       <a href="#next">14 · ขั้นต่อไป</a>
     </nav>
-    <div class="sidebar-section" style="margin-top:auto">v3.9 · 2026-06-09</div>
+    <div class="sidebar-section" style="margin-top:auto">v3.9 · 2026-06-10</div>
   </aside>
 
   <main class="reader" id="top">
     <div class="topbar">
       <span class="topbar-title">GENCODE — สรุปการเปลี่ยนแปลง (สำหรับทีม)</span>
-      <span class="topbar-date">2026-06-09</span>
+      <span class="topbar-date">2026-06-10</span>
     </div>
     <div class="content-shell">
       <h1>GENCODE — สรุปการเปลี่ยนแปลง</h1>
@@ -130,18 +130,20 @@ body.locked .mobile-toggle{display:none}
       </div>
       <p class="lead">หน้านี้สรุปว่า <strong>ระบบรหัส GENCODE เปลี่ยนอะไรไปบ้าง</strong> จากของเดิม — มีตารางเทียบ <strong>ชื่อไทย / อังกฤษ / รหัส</strong> และแยกชัดว่าอันไหน <span class="badge existing">ของเดิม</span> อันไหน <span class="badge new">เพิ่งเพิ่ม</span></p>
 
-      <h2 id="overview">1 · ภาพรวม — ระบบทำงาน 3 ชั้น</h2>
-      <p>ก่อนดูรหัส ขอปูภาพใหญ่ก่อน เพราะมันเปลี่ยนวิธีคิดนิดนึง:</p>
+      <h2 id="overview">1 · ภาพรวม — หลักการ 2 ชั้น (เคาะแล้ว)</h2>
+      <p>ก่อนดูรหัส ขอปูภาพใหญ่ก่อน เพราะตอนนี้ขอบเขตถูกล็อกแล้ว:</p>
       <table>
         <thead><tr><th>ชั้น</th><th>หน้าที่</th></tr></thead>
         <tbody>
-          <tr><td><strong>GENCODE</strong></td><td>ชั้นออกแบบ — เข้าใจลำดับชั้น (แพกเกจ / ซับแพกเกจ / แคมเปญ)</td></tr>
-          <tr><td><strong>JERA</strong></td><td>ชั้นใช้งานจริง — แบนราบ 1 แถวต่อ 1 สิ่งที่ขาย <em>ไม่มีลำดับชั้น</em></td></tr>
-          <tr><td><strong>Chrome extension</strong></td><td>สะพาน — แปลงดีไซน์ GENCODE → สร้างแถวจริงใน JERA</td></tr>
+          <tr><td><strong>GENCODE</strong></td><td>ชั้น catalog — เข้ารหัสเฉพาะ <strong>สิ่งที่คลินิกทำ/ขายจริง</strong>: treatment / course / product</td></tr>
+          <tr><td><strong>Transaction layer</strong></td><td>ทุกอย่างเรื่องการจ่าย: วิธีจ่าย / comp / ส่วนลด / ฟรี / แต้ม / เงินเติม / influencer / ค่าสมาชิก — <strong>ไม่เข้ารหัสใน GENCODE</strong></td></tr>
+          <tr><td><strong>JERA วันนี้</strong></td><td>transaction layer ที่ใช้อยู่จริงตอนนี้</td></tr>
+          <tr><td><strong>Sales-Order app</strong></td><td>เฟสถัดไปหลัง GENCODE — mimic transaction layer ของ JERA ยังไม่ใช่สิ่งที่ต้อง built ในรอบนี้</td></tr>
         </tbody>
       </table>
-      <p>เพราะ JERA แบนราบ ลำดับชั้นที่มันเก็บไม่ได้ เลยไปอยู่ <strong>ในตัวรหัส</strong> และการจัดกลุ่มแคมเปญอยู่ใน registry ของ GENCODE</p>
-      <div class="callout"><strong>หลักการ 2 ชั้น:</strong> รหัส = <em>ตัวตนของสินค้า/คอร์ส</em> (มันคืออะไร) · ราคา / ส่วนลด / แคมเปญที่ลูกค้าเลือก = <em>transaction</em> (การขาย) — ไม่ปนกัน</div>
+      <p>เพราะ JERA แบนราบ สิ่งที่เป็น <strong>ตัวตนของคอร์ส/สินค้า</strong> อยู่ใน GENCODE ส่วนรายละเอียดการขายอยู่ใน transaction layer แยกออกไป</p>
+      <div class="callout"><strong>ตัดสินใจแล้ว 2026-06-10:</strong> GENCODE = real treatment/course/product only · ราคา / ส่วนลด / ฟรี / แต้ม / เงินเติม / ค่าสมาชิก = transaction layer ไม่เข้ารหัส · transaction layer วันนี้ = JERA · Sales-Order app = เฟสถัดไปหลัง GENCODE</div>
+      <div class="callout"><strong>Membership:</strong> Privilege Member เป็นสมาชิกจริง (ลงทะเบียนครั้งเดียว 100฿ ใน JERA) → อยู่ชั้น membership/wallet/transaction ไม่ใช่คอร์ส และไม่ mint เป็น CRS</div>
 
       <h2 id="diff">2 · อะไรเปลี่ยนไป (diff จากของเดิม)</h2>
       <div class="diff-grid">
@@ -150,7 +152,7 @@ body.locked .mobile-toggle{display:none}
         <div class="diff-card"><h4>③ ศัลย์ = scheme B</h4>ช่อง 5 = เทคนิค/ตำแหน่ง · ช่อง 7 = หมอ<div class="from-to"><span class="old">ช่อง 5 = หมอ</span> → <span class="new">ช่อง5=เทคนิค · ช่อง7=หมอ</span></div></div>
         <div class="diff-card"><h4>④ ซิลิโคนใช้ชื่อยี่ห้อ</h4>เลิกใช้ STD/PREM ที่อ่านไม่รู้ยี่ห้อ — ย้ายเป็น technique token ของจมูก<div class="from-to"><span class="old">SLSTD/SLPREM</span> → <span class="new">SILBD/SILBLK/SILIMP/SILUP</span></div></div>
         <div class="diff-card"><h4>⑤ PKG = เอกสารในชั้นคอร์ส</h4>แพกเกจ/แคมเปญ = <strong>เอกสาร</strong>ในชั้น Course ไม่ใช่ช่องรหัสแยก<div class="from-to"><span class="old">ระบบขนาน</span> → <span class="new">documentation ในชั้น CRS</span></div></div>
-        <div class="diff-card"><h4>⑥ ตัดของเลิกขาย</h4>verify จาก JERA จริง (del_flag/show_flag)<div class="from-to"><span class="old">LMED · 40T · 0.5CC …</span> ออก</div></div>
+        <div class="diff-card"><h4>⑥ เลิกขาย ≠ ตัดรหัส</h4>ของเลิกใช้แล้วยังมี code ได้ · แยกสถานะด้วย <strong>isActive(0,1)</strong><div class="from-to"><span class="old">ตัดทิ้งตาม del_flag/show_flag</span> → <span class="new">เก็บ code + isActive</span></div></div>
       </div>
 
       <h2 id="crs">3 · โครง CRS — รหัสคอร์สถาวร (7 ช่อง + ช่อง 8 ตัวเลือก)</h2>
@@ -187,29 +189,27 @@ body.locked .mobile-toggle{display:none}
       <div class="callout"><strong>SUBTYPE มี 3 ค่าแล้ว:</strong> <code>INI</code> (คอร์สหลัก) · <code>OPT</code> (ของเสริม/แก้แบบเก็บเงิน) · <span class="badge new">ใหม่</span> <code>WAR</code> (แก้ฟรีในช่วงประกัน, ราคา = 0). รายละเอียด WAR อยู่หัวข้อ 4.</div>
       <p style="font-size:.88rem;color:var(--ink-mid)">หมวด (CATEGORY) ฝั่ง SKN: <code>FIL</code> ฟิลเลอร์ · <code>BTX</code> โบท็อกซ์ · <code>EBD</code> เครื่องพลังงาน · <code>SKB</code> สกินบูสเตอร์ · <code>BIO</code> ไบโอ · <code>THR</code> ร้อยไหม · <code>MLZ</code> ฝ้า · <code>FAT</code> แฟต · <code>ACS</code> หลุมสิว · <code>GEN</code> สกินทั่วไป &nbsp;|&nbsp; ฝั่ง SUR: <code>NOSE</code> · <code>EYE</code> · <code>LIP</code> · <code>CHIN</code> · <code>FACFT</code> · <code>PTRYG</code> · <span class="badge new">ใหม่</span> <code>GEN</code> (ออพชั่นข้ามหัตถการ เช่น ยาสลบ)</p>
 
-      <h2 id="warranty">4 · WAR — เคสประกัน (subtype ใหม่) <span class="badge new">ใหม่ · Captain เคาะ 2026-06-09</span></h2>
+      <h2 id="warranty">4 · WAR — เคสประกัน (subtype ใหม่) <span class="badge new">ใหม่ · lock v3.9</span></h2>
       <p class="lead">ของใหม่ล่าสุด: เพิ่ม <code>WAR</code> เป็น <strong>SUBTYPE ตัวที่ 3</strong> (ช่อง 3) คู่กับ <code>INI</code>/<code>OPT</code> — สำหรับ <strong>เคสแก้ฟรีในช่วงรับประกันหลังผ่าตัด</strong> (warranty revision, ราคา = 0)</p>
       <div class="callout"><strong>ทำไมต้องมี WAR แยก (ไม่ใช่แค่ตั้งราคา 0):</strong> เดิมหลักการคือ "ในประกัน = แค่ flag ราคา 0 ที่ใบขาย (Sales Order)" — แต่ Captain ตัดสินใจ (2026-06-09) ให้ <strong>encode ที่ระดับรหัส</strong> เพื่อให้ <strong>รายงานเคสประกันได้ราย<u>หมอ</u></strong> (back-office track ต้นทุน: เคสใหม่ vs เคสแก้เก็บเงิน vs เคสแก้ฟรี แยกตามหมอได้ที่ชั้นคอร์สเลย). เป็น <strong>การ override หลักการเดิมโดยตั้งใจ</strong> ยอมให้รหัสเพิ่มจำนวนเพื่อแลกกับรายงานที่ละเอียด</div>
-      <div class="callout"><strong>WAR vs OPT — อย่าสับสน:</strong> <code>WAR</code> = แก้ <strong>ฟรี</strong> ในประกัน (ราคา 0) &nbsp;·&nbsp; <code>OPT</code> = แก้แบบ <strong>เก็บเงิน</strong> (charged revision) ที่ลูกค้าจ่ายเอง. คนละ subtype. ของแก้แบบเก็บเงินทั่วไปยังใช้ OPT เหมือนเดิม เช่น <code>CRS-SUR-OPT-NOSE-REV-001-DRGP</code> (แก้จมูกเก็บเงิน)</div>
+      <div class="callout"><strong>WAR vs OPT — อย่าสับสน:</strong> <code>WAR</code> = แก้ <strong>ฟรี</strong> ในประกัน (ราคา 0) &nbsp;·&nbsp; <code>OPT</code> = แก้แบบ <strong>เก็บเงิน</strong> (charged revision) ที่ลูกค้าจ่ายเอง. คนละ subtype. ของแก้แบบเก็บเงินทั่วไปยังใช้ OPT เหมือนเดิม เช่น <code>CRS-SUR-OPT-NOSE-REVIS-001-DRGP</code> (แก้จมูกเก็บเงิน)</div>
       <h3>WAR ครอบทุกแผนก (ไม่ใช่แค่ศัลย์)</h3>
       <p>ที่ไหนมีประกัน WAR ใช้ได้หมด — <strong>ศัลยกรรม + สกิน + ฉีด</strong>:</p>
       <table>
         <thead><tr><th>แผนก</th><th>เคสประกัน (ตัวอย่าง)</th><th>รหัส (7 ช่อง)</th></tr></thead>
         <tbody>
-          <tr><td>ศัลย์ — จมูก</td><td>แก้จมูกฟรีในประกัน (หมอกรุ๊ป)</td><td><code>CRS-SUR-WAR-NOSE-REV-001-DRGP</code></td></tr>
-          <tr><td>ศัลย์ — ตา</td><td>แก้ตาฟรีในประกัน (หมอไอยู)</td><td><code>CRS-SUR-WAR-EYE-REV-001-DRIU</code></td></tr>
-          <tr><td>ศัลย์ — คาง</td><td>แก้คางฟรีในประกัน (หมอโด)</td><td><code>CRS-SUR-WAR-CHIN-REV-001-DRDO</code></td></tr>
-          <tr><td>สกิน — โบท็อกซ์</td><td>แก้โบท็อกซ์ฟรีในประกัน</td><td><code>CRS-SKN-WAR-BTX-FXBTX-001-BASE</code></td></tr>
+          <tr><td>ศัลย์ — จมูก</td><td>แก้จมูกฟรีในประกัน (หมอกรุ๊ป)</td><td><code>CRS-SUR-WAR-NOSE-REVIS-001-DRGP</code></td></tr>
+          <tr><td>ศัลย์ — ตา</td><td>แก้ตาฟรีในประกัน (หมอไอยู)</td><td><code>CRS-SUR-WAR-EYE-REVIS-001-DRIU</code></td></tr>
           <tr><td>ฉีด — ยาฆ่าเชื้อ</td><td>Cef-3 ฟรีในประกัน</td><td><code>CRS-MSC-WAR-EXT-CF3-001-BASE</code></td></tr>
         </tbody>
       </table>
-      <blockquote style="font-size:.85rem"><strong>โครงรหัส WAR ฝั่งศัลย์ = scheme B เหมือนเดิม:</strong> ช่อง 3 = <code>WAR</code> · ช่อง 5 (differentiator) = เทคนิค/ที่แก้ (<code>REV</code> = revision) · ช่อง 7 (variant) = <strong>หมอ</strong> (<code>DRGP</code>/<code>DRDO</code>/<code>DRIU</code>/<code>DRBL</code>…) → ได้รายงานราย<u>หมอ</u>ทันที</blockquote>
-      <div class="callout"><strong>⚠️ สถานะ:</strong> WAR เป็น <strong>decision ที่ Captain เคาะแล้ว (2026-06-09)</strong> แต่ <strong>ยังไม่ลงในสเปก/engine ที่ทดสอบ (v3.9 ปัจจุบัน SUBTYPE = INI/OPT)</strong> — กำลังทำผ่าน issue <code>glyph-oracle#351</code> (เพิ่ม WAR ใน engine ครอบ skin+surgery+injection) + <code>YD_GENCODE#30</code> (redo crosswalk warranty บน scheme B). รหัสตัวอย่างข้างบนเป็นไปตามโครงที่เคาะ — token ที่แน่นอน (เช่น REV / FXBTX ต่อเคส) จะ ratify ตอนทำ crosswalk จริง</div>
+      <blockquote style="font-size:.85rem"><strong>โครงรหัส WAR ฝั่งศัลย์ = scheme B เหมือนเดิม:</strong> ช่อง 3 = <code>WAR</code> · ช่อง 5 (differentiator) = เทคนิค/ที่แก้ เช่น <code>REVIS</code> · ช่อง 7 (variant) = <strong>หมอ</strong> (<code>DRGP</code>/<code>DRDO</code>/<code>DRIU</code>/<code>DRBL</code>…) → ได้รายงานราย<u>หมอ</u>ทันที</blockquote>
+      <div class="callout"><strong>สถานะ:</strong> <code>WAR</code> ลงใน <code>CRS-CODE.md</code> v3.9 แล้ว และครอบ skin / surgery / injection. ตัวอย่างข้างบนใช้ token ที่มีในสเปกแล้ว; รายการ WAR รายเคสละเอียดให้ตาม crosswalk warranty/revision ใน <code>YD_GENCODE#30</code></div>
 
       <h2 id="added">5 · รหัสที่เพิ่งเพิ่ม (D5) — เทียบของเดิม ↔ ของใหม่</h2>
-      <div class="callout"><strong>⚠️ สถานะของรหัสในหัวข้อนี้ — แยก "lock แล้ว" จาก "เสนอ (รอ ratify)":</strong><br>
-      ✅ <strong>lock แล้ว</strong> (อยู่ใน <code>CRS-CODE.md</code> v3.9): ซิลิโคน <code>SILBD</code>/<code>SILBLK</code>/<code>SILIMP</code>/<code>SILUP</code> · <code>GEC</code> · variant ไหม <code>1T</code>/<code>4T</code>/<code>8T</code>.<br>
-      🟡 <strong>เสนอจาก crosswalk · ยังไม่ลงสเปก v3.9</strong> (เป็น "registry gaps to ratify" ใน <code>CRS-CODE.md</code> §7 ข้อ 7): SKB <code>VTRN</code>/<code>DEWV</code>/<code>YCG</code>/<code>MINID</code> · <code>HGL</code> (HUGEL) · ACS <code>SUBC</code>/<code>STEM</code> · ไหม <code>2T</code>/<code>6T</code> · <code>1.5CC</code> · EXT <code>CFAH</code>/<code>TRAM</code>/<code>HDEX</code>. <strong>token ที่แน่นอนรอ Dr.Do เคาะ batch</strong> — แสดงไว้เพื่อเทียบ ไม่ใช่รหัสที่ใช้ได้แล้ว</div>
+      <div class="callout"><strong>สถานะของรหัสในหัวข้อนี้:</strong><br>
+      ✅ <strong>lock แล้วใน <code>CRS-CODE.md</code> v3.9</strong>: ซิลิโคน <code>SILBD</code>/<code>SILBLK</code>/<code>SILIMP</code>/<code>SILUP</code> · SKB <code>VTRN</code>/<code>MCEL</code>/<code>DEWV</code>/<code>YCG</code>/<code>MINID</code> · <code>HGL</code> · ACS <code>SUBC</code>/<code>STEM</code> · <code>SRF</code> · <code>LMED</code> · EXT <code>CFAH</code>/<code>TRAM</code>/<code>HDEX</code> · WLP <code>MNJSPLIT</code>/<code>MNJWHOLE</code>.<br>
+      ✅ <strong>ปริมาณแบบ dynamic ใน mapper</strong>: เช่น <code>1.5CC</code>, <code>6T</code>, <code>40T</code>, <code>{N}MG</code> อ่านจากชื่อโดย <code>variant.ts</code>. ของเลิกใช้แล้วยังมี code ได้ แต่เลือกขายใหม่ด้วย <code>isActive(0,1)</code></div>
 
       <h3>ซิลิโคนจมูก/คาง (OPT) — เปลี่ยนชื่อให้อ่านออกว่ายี่ห้ออะไร <span class="badge existing">lock v3.9</span></h3>
       <table>
@@ -225,11 +225,12 @@ body.locked .mobile-toggle{display:none}
       </table>
       <blockquote style="font-size:.85rem">รูปเต็ม (scheme B — ช่อง 7 = หมอ): <code>CRS-SUR-OPT-NOSE-SILBD-001-DRDO</code> · ซิลิโคนเป็น <strong>technique token ของจมูก</strong> (ช่อง 5) · 1 รหัส = 1 เกรด ไม่ปนกัน · ที่มา: <code>CRS-CODE.md</code> v3.9 §6F NOSE tokens</blockquote>
 
-      <h3>สกินบูสเตอร์ (SKB) — แบรนด์ใหม่ <span class="badge new">เสนอ · รอ ratify</span></h3>
+      <h3>สกินบูสเตอร์ (SKB) — แบรนด์ใหม่ <span class="badge existing">lock v3.9</span></h3>
       <table>
         <thead><tr><th>สถานะ</th><th>ชื่อไทย</th><th>English</th><th>รหัส</th></tr></thead>
         <tbody>
           <tr><td><span class="badge new">ใหม่</span></td><td>ไวทาแรน (1–4cc)</td><td>Vitaran</td><td><code>VTRN</code></td></tr>
+          <tr><td><span class="badge new">ใหม่</span></td><td>มาเด้คอลลาเจน</td><td>Made Collagen</td><td><code>MCEL</code></td></tr>
           <tr><td><span class="badge new">ใหม่</span></td><td>ดิววี่ โกลว์</td><td>Dewvy Glow</td><td><code>DEWV</code></td></tr>
           <tr><td><span class="badge new">ใหม่</span></td><td>ยองโด คริสตัล โกลว์</td><td>Youngdo Crystal Glow</td><td><code>YCG</code></td></tr>
           <tr><td><span class="badge new">ใหม่</span></td><td>มินิดอช หน้าใสฉ่ำวาว</td><td>mini-dose glow</td><td><code>MINID</code></td></tr>
@@ -237,7 +238,7 @@ body.locked .mobile-toggle{display:none}
         </tbody>
       </table>
 
-      <h3>หัตถการอื่นที่เพิ่ม <span class="badge new">ส่วนใหญ่ เสนอ · รอ ratify</span></h3>
+      <h3>หัตถการอื่นที่เพิ่ม <span class="badge existing">lock v3.9 + mapper</span></h3>
       <table>
         <thead><tr><th>ชื่อไทย</th><th>English</th><th>หมวด</th><th>รหัส</th></tr></thead>
         <tbody>
@@ -254,10 +255,10 @@ body.locked .mobile-toggle{display:none}
         </tbody>
       </table>
 
-      <h3>ตัดออก (เลิกขายแล้ว — verify จาก JERA จริง)</h3>
+      <h3>เลิกใช้ / เลิกขาย (ยังมี code ได้ — แยกด้วย isActive)</h3>
       <p style="font-size:.88rem">
-        <span class="badge removed">ออก</span> <code>LMED</code> โปรแกรมสลายฝ้า · <code>40T</code> ไหม 40 เส้น · <code>0.5CC</code> Juvelook · <code>2.5CC</code> Hestina/Innoglossy · <code>4NDL</code> · <code>HGL 100U</code>
-        &nbsp;— ทั้งหมด <code>del_flag=true</code> หรือ <code>show_flag=false</code> = ไม่อยู่บนเมนูแล้ว
+        <span class="badge existing">เก็บรหัส</span> <code>LMED</code> โปรแกรมสลายฝ้า · <code>40T</code> ไหม 40 เส้น · <code>0.5CC</code> Juvelook · <code>2.5CC</code> Hestina/Innoglossy · <code>4NDL</code> · <code>HGL 100U</code>
+        &nbsp;— ถ้าเลิกใช้/ไม่โชว์ใน JERA ให้แยกเป็น metadata <code>isActive=0</code>; ถ้ายังขายอยู่ <code>isActive=1</code>. สถานะนี้ไม่ใช่เงื่อนไขว่าจะมี GENCODE หรือไม่
       </p>
 
       <h2 id="sur">6 · รหัสศัลยกรรม (SUR scheme B) <span class="badge existing">lock v3.9</span></h2>
@@ -283,12 +284,12 @@ CRS-SUR-OPT-EYE-LASERREV-001-GEN แก้เลเซอร์ตา        ไ
         </tbody>
       </table>
       <div class="callout"><strong>หมอ = ช่อง 7 (VARIANT) สำหรับศัลย์:</strong> <code>DRDO</code> (โด) · <code>DRGP</code> (กรุ๊ป) · <code>DRBL</code>/<code>DRBALL</code> (บอล) · <code>DRIU</code> (ไอยู) · <code>DRPR</code>/<code>DRPRO</code> (โปร) · <code>DRMY</code> (เมย) · <code>DRPI</code> (พี) · <code>GEN</code> (ยังไม่ระบุหมอ). หมอ <strong>ไม่ดึงจากชื่อหัตถการ</strong> — wizard ถามตอนสร้าง</div>
-      <blockquote style="font-size:.85rem"><span class="badge existing">verified</span> หัตถการศัลย์ <strong>73 ตัว</strong> → <strong>0 collision</strong> (<code>SUR-PROCEDURE-MAP.md</code>) · พิสูจน์ด้วย eval-harness 73/73</blockquote>
+      <blockquote style="font-size:.85rem"><span class="badge existing">verified</span> หัตถการศัลย์ <strong>74 ตัว</strong> → <strong>0 collision</strong> (<code>SUR-PROCEDURE-MAP.md</code>) · พิสูจน์ด้วย eval-harness 74/74</blockquote>
 
-      <h2 id="set">7 · Set ผ่าตัดฆ่าเชื้อ — เป็น "คอร์ส" (ไม่ใช่ service) <span class="badge new">ใหม่ · 2026-06-09</span></h2>
-      <p class="lead">"ชุด Set ผ่าตัดฆ่าเชื้อ" (เคสโรคติดเชื้อ จ่ายเพิ่ม) = <strong>คอร์สที่ขาย/เก็บเงินเอง</strong> (CRS) — เหมือน Set อื่นๆ ที่เป็น <code>CRS-MSC-INI-SET-*</code> อยู่แล้ว ไม่ใช่ service ที่ผูกอยู่ในชื่อคอร์สอื่น</p>
+      <h2 id="set">7 · Set ผ่าตัดฆ่าเชื้อ — เป็น "คอร์ส" (ไม่ใช่ service) <span class="badge new">ใหม่ · 2026-06-10</span></h2>
+      <p class="lead">"ชุด Set ผ่าตัดฆ่าเชื้อ" = <strong>คอร์สที่ขาย/เก็บเงินเอง</strong> (CRS) — เหมือน Set อื่นๆ ที่เป็น <code>CRS-MSC-INI-SET-*</code> อยู่แล้ว ไม่ใช่ service ที่ผูกอยู่ในชื่อคอร์สอื่น</p>
       <div class="callout"><strong>แก้ความเข้าใจเดิม:</strong> ก่อนหน้านี้ GLUEBOY แมป Set ฆ่าเชื้อไว้ผิด — เอาไปอยู่ชั้น service + ฝังในชื่อคอร์ส. ฝน (data partner) ชี้ว่าจริงๆ มันคือ <strong>ของที่ลูกค้าจ่ายเพิ่ม</strong> → ต้องเป็น <strong>CRS (คอร์ส) ของตัวเอง</strong></div>
-      <h3>3 เวอร์ชัน (แยกด้วย VARIANT + ราคา)</h3>
+      <h3>3 เวอร์ชัน (VARIANT แยกสินค้า · ราคาอยู่ transaction)</h3>
       <table>
         <thead><tr><th>ชื่อไทย</th><th>English</th><th>ราคา</th><th>รหัส (โครง CRS-MSC-INI-SET-…)</th></tr></thead>
         <tbody>
@@ -297,7 +298,7 @@ CRS-SUR-OPT-EYE-LASERREV-001-GEN แก้เลเซอร์ตา        ไ
           <tr><td>ลูกค้าศัลยกรรมปากกระจับ ชุด Set ฆ่าเชื้อ B24</td><td>Sterile set B24 (cleft-lip)</td><td>12,000</td><td><code>CRS-MSC-INI-SET-…-001-…</code></td></tr>
         </tbody>
       </table>
-      <div class="callout"><strong>SET เป็น CATEGORY จริงในระบบ:</strong> gold ที่ทดสอบแล้วมี <code>CRS-MSC-INI-SET-NOSE-001-BASE</code> (Set เคสจมูก), <code>CRS-MSC-INI-SET-CHIN-001-BASE</code> (Set เคสคาง), <code>CRS-MSC-INI-SET-HOME-001-BASE</code> (ชุดยากลับบ้าน). Set ฆ่าเชื้อ 3 ตัวข้างบนเข้าโครงเดียวกัน — <strong>token/variant ที่แน่นอน (plain / B24 / ปากกระจับ) รอ ratify ใน crosswalk redo (<code>YD_GENCODE#30</code>) บน v3.9</strong> ยังไม่ assert ตอนนี้</div>
+      <div class="callout"><strong>SET เป็น CATEGORY จริงในระบบ:</strong> gold ที่ทดสอบแล้วมี <code>CRS-MSC-INI-SET-NOSE-001-BASE</code> (Set เคสจมูก), <code>CRS-MSC-INI-SET-CHIN-001-BASE</code> (Set เคสคาง), <code>CRS-MSC-INI-SET-HOME-001-BASE</code> (ชุดยากลับบ้าน). Set ฆ่าเชื้อ 3 ตัวข้างบนเข้าโครงเดียวกัน — <strong>B24 เป็น token แบบ opaque สำหรับหน้าคนไข้/ทีม; ไม่อธิบายความหมายบน guide นี้</strong></div>
 
       <h2 id="dedup">8 · Dedup + เปิด/ปิด (active)</h2>
       <p>เมื่อระบบเจอรหัสที่ "ออกมาเหมือนกัน" ต้องมีนโยบายจัดการ — และต้องแยก <em>ราคา</em> ออกจาก <em>ตัวรหัส</em> ให้ชัด:</p>
@@ -306,7 +307,7 @@ CRS-SUR-OPT-EYE-LASERREV-001-GEN แก้เลเซอร์ตา        ไ
    ├ เก็บ (ของจริงคนละตัว)  → +V002  (กลายเป็น 2 รหัส)
    └ ผิด (คีย์พลาด)         → soft-delete ตัวเดิม + สร้างใหม่</code></pre>
       <div class="callout"><strong>price = transaction (ไม่อยู่ในรหัส).</strong> "รหัสเดียว ราคาต่าง" เป็น <strong>SIGNAL</strong> ให้เช็ก 3 อย่าง: <br>① แคมเปญ → ไปอยู่ที่ transaction &nbsp;·&nbsp; ② attribute ขาด → เพิ่ม token &nbsp;·&nbsp; ③ dup → ลบ. <br>ราคา tier ที่ <em>มีความหมาย</em> = ทำเป็น token (เช่น silicone <code>SILBD</code> / <code>SILBLK</code> / <code>SILIMP</code>)</div>
-      <div class="callout"><strong>active / soft-delete = หน้าที่ user</strong> (Nothing-is-Deleted): รหัส = <em>ตัวตนถาวร</em>, active = <em>สถานะ</em> ไม่ใช่ตัวกรอง — ปิดการขายได้ แต่รหัสไม่หาย</div>
+      <div class="callout"><strong>active / soft-delete = isActive(0,1)</strong> (Nothing-is-Deleted): รหัส = <em>ตัวตนถาวร</em>, active = <em>สถานะ</em> ไม่ใช่ตัวกรอง — ปิดการขายได้ แต่รหัสไม่หาย</div>
 
       <h2 id="pkg">9 · PKG — แคมเปญ / แพกเกจ / ซับแพกเกจ</h2>
       <p>ชั้นบางๆที่ <strong>อ้างถึง</strong> รหัส CRS (ไม่ใช่ระบบขนาน):</p>
@@ -486,12 +487,12 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600 shots
       <table>
         <thead><tr><th>layer</th><th>เฉลย (gold)</th><th>จำนวน</th><th>ผล</th></tr></thead>
         <tbody>
-          <tr><td>ศัลยกรรม (SUR)</td><td>SUR-PROCEDURE-MAP (0 collision)</td><td>73</td><td><span class="badge existing">73/73 ✓</span></td></tr>
-          <tr><td>สกิน / ทรีท / วิต / อื่นๆ</td><td>crosswalk (high-confidence)</td><td>234</td><td><span class="badge existing">234/234 ✓</span></td></tr>
-          <tr><td><strong>รวม</strong></td><td></td><td><strong>307</strong></td><td><span class="badge existing">307/307 = 100% ✓</span></td></tr>
+          <tr><td>ศัลยกรรม (SUR)</td><td>SUR-PROCEDURE-MAP (0 collision)</td><td>74</td><td><span class="badge existing">74/74 ✓</span></td></tr>
+          <tr><td>สกิน / ทรีท / วิต / อื่นๆ</td><td>crosswalk (high-confidence)</td><td>266</td><td><span class="badge existing">266/266 ✓</span></td></tr>
+          <tr><td><strong>รวม</strong></td><td></td><td><strong>340</strong></td><td><span class="badge existing">340/340 = 100% ✓</span></td></tr>
         </tbody>
       </table>
-      <blockquote style="font-size:.85rem">+ unit tests 16 ตัวผ่านหมด · 0 error · รัน <code>bun run src/eval.ts</code> → ออกเป็นหน้า report ดูผลทีละหัตถการได้</blockquote>
+      <blockquote style="font-size:.85rem">+ unit tests 22 ตัวผ่านหมด · 0 error · รัน <code>bun run src/eval.ts</code> / <code>bun run src/eval-skin.ts</code> → ออกเป็นหน้า report ดูผลทีละหัตถการได้</blockquote>
 
       <h3>Process ② — flag-don't-merge (รู้ตัวเมื่อไม่แน่ใจ)</h3>
       <div class="callout"><strong>ระบบไม่เดามั่ว:</strong> ชื่อใหม่ที่ registry ไม่รู้จัก หรือก้ำกึ่งระหว่าง 2 token → <strong>หยุด ⚑ flag ถามคน</strong> → คนยืนยัน 1 ครั้ง → ระบบจำเป็น <em>alias</em> (ครั้งหน้าไม่ต้องถาม). ของที่ไม่ชัวร์จะไม่ถูกใส่รหัสผิดลงฐาน</div>
@@ -499,11 +500,11 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600 shots
       <h3>Process ③ — assist: ชื่อที่ flag <span class="badge new">ใหม่</span></h3>
       <p>พอ parser <strong>flag</strong> ไม่ใช่ทางตัน — มีทางช่วยต่อ ให้คนไม่ต้องแมปทุกตัว (3 ชั้น):</p>
       <pre><code>1. มี alias ที่เคยยืนยัน?  → ใช้เลย (ลัด)
-2. ไม่มี → parser ตอบได้?  → ใช้ (เส้น 307/307 เดิม ไม่แตะ)
+2. ไม่มี → parser ตอบได้?  → ใช้ (เส้น 340/340 เดิม ไม่แตะ)
 3. flag                  → เสนอ token ให้คนเลือก/ยืนยัน
                            ยืนยัน 1 ครั้ง → จำเป็น alias → ครั้งหน้าเข้าชั้น 1 เลย</code></pre>
       <div class="callout"><strong>ตัวเสนอ (proposer):</strong> <strong>fuzzy</strong> วัดความใกล้ตัวอักษร (เช่น "Restilane" ≈ Restylane → เสนอ <code>RST</code>) เป็นตัวหลักที่รันได้เลย &nbsp;·&nbsp; <strong>+ ช่อง LLM เสียบได้</strong> (ใส่ Anthropic key ทีหลัง). <strong>deterministic ยังเป็นตัวหลัก</strong> — fuzzy/LLM แค่ช่วยส่วนหาง · <em>คน</em>ยืนยันก่อนจำเสมอ (ไม่ auto)</div>
-      <blockquote style="font-size:.85rem">3 ไฟล์ใหม่: <code>alias.ts</code> (คลังจำ name→token · append-only) · <code>assist.ts</code> (fuzzy + ช่อง LLM) · <code>resolve.ts</code> (คุม flow · ห่อ parser ไม่แก้) — <span class="badge existing">YD_GENCODE PR 24</span> · parser เดิมไม่แตะ ยัง 307/307</blockquote>
+      <blockquote style="font-size:.85rem">3 ไฟล์ใหม่: <code>alias.ts</code> (คลังจำ name→token · append-only) · <code>assist.ts</code> (fuzzy + ช่อง LLM) · <code>resolve.ts</code> (คุม flow · ห่อ parser ไม่แก้) — parser เดิมไม่แตะ ยัง 340/340</blockquote>
 
       <h3>โครงสร้างไฟล์ — <code>YD_GENCODE/mapper/</code> (PR 22)</h3>
       <p>โค้ดทั้งหมด ~1,450 บรรทัด · เป็น pure function · <strong>ไม่มี dependency ภายนอก</strong> (bun รันได้เลย ไม่ต้อง <code>npm install</code>):</p>
@@ -533,7 +534,7 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600 shots
 │   └── assist.test.ts    alias + fuzzy proposer + resolve flow
 │
 └── data/                 📂 "เฉลย" (gold)
-    └── gold-skin.tsv     เฉลย 234 หัตถการ skin (จาก crosswalk)</code></pre>
+    └── gold-skin.tsv     เฉลย 266 หัตถการ skin/trt/vit/misc (จาก crosswalk)</code></pre>
       <table>
         <thead><tr><th>folder</th><th>หน้าที่</th></tr></thead>
         <tbody>
@@ -546,7 +547,7 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600 shots
 
       <h2 id="uxspec">13 · UX/UI Spec สำหรับ Pym <span class="badge new">DRAFT v0.1</span></h2>
       <p class="lead"><strong>DRAFT v0.1 — for owner + Pym review.</strong> หัวข้อนี้เป็น <strong>requirements spec</strong> ว่า UI ที่ขับด้วย GENCODE ต้องทำอะไรบ้าง ไม่ใช่ mockup และไม่ใช่ visual direction. Pym ออกแบบ flow, screen, interaction detail, และ visual hierarchy ได้เต็มที่ภายใต้โครง GENCODE ที่ fixed แล้ว</p>
-      <div class="callout"><strong>Source of truth:</strong> โครงรหัสและตัวอย่างในสเปกนี้อ้างจาก <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/blob/main/CRS-CODE.md">YD_GENCODE/CRS-CODE.md v3.9</a>, <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/blob/main/README.md">README layer summary</a>, <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/blob/main/CRS-SEGMENT-PROFILE-REGISTRY.md">segment-profile registry</a>, และ <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/tree/main/mapper">mapper/</a> ที่ทดสอบชื่อไทย → GENCODE ได้ 307/307 gold. หน้านี้ชี้ไปที่ catalog ไม่คัดลอก token list เต็ม เพื่อกัน drift</div>
+      <div class="callout"><strong>Source of truth:</strong> โครงรหัสและตัวอย่างในสเปกนี้อ้างจาก <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/blob/main/CRS-CODE.md">YD_GENCODE/CRS-CODE.md v3.9</a>, <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/blob/main/README.md">README layer summary</a>, และ <a href="https://github.com/dryoungdo-wellness-clinic/YD_GENCODE/tree/main/mapper">mapper/</a> ที่ทดสอบชื่อไทย → GENCODE ได้ 340/340 gold. หน้านี้ชี้ไปที่ catalog ไม่คัดลอก token list เต็ม เพื่อกัน drift</div>
 
       <h3>ขอบเขตที่ fixed vs สิ่งที่ Pym ออกแบบได้</h3>
       <table>
@@ -556,7 +557,7 @@ PKG-SKN-OLG-C2602-SETA-U600     ซับ: อัพ 600 shots
           <tr><td>สามชั้นหลักยังแยกหน้าที่: <strong>CRS</strong> = สิ่งที่ลูกค้าซื้อ, <strong>SVC</strong> = สิ่งที่ทำจริง, <strong>PRD</strong> = ของ/สต็อกที่ใช้</td><td>จะโชว์ layer ไหนใน order-entry, breakdown, drawer, หรือ review step แบบไหนให้ทีมเข้าใจง่าย</td></tr>
           <tr><td>Scheme B สำหรับ SUR: ช่อง 5 = technique/part, ช่อง 7 = doctor. ตัวอย่าง verified: <code>CRS-SUR-INI-NOSE-SEMI-001-DRDO</code></td><td>วิธีให้เลือกหมอ, วิธีอธิบายความต่าง surgery vs skin, และวิธีลดความสับสนของ operator</td></tr>
           <tr><td>mapper ต้อง flag เมื่อไม่รู้หรือกำกวม. Low confidence ห้าม auto-write ลง catalog</td><td>รูปแบบ review/confirm, microcopy, severity, และวิธีส่งงานให้ owner ratify</td></tr>
-          <tr><td>ราคา, แคมเปญ, cashier, branch, และ transaction fact ไม่ใช่โครง CRS catalog code</td><td>จะวาง price/campaign fields ใกล้ code breakdown แค่ไหน เพื่อให้ทีมเห็นว่าเป็น sales-order data ไม่ใช่ segment ใหม่</td></tr>
+          <tr><td>ราคา, วิธีจ่าย, comp, ส่วนลด, ฟรี, แต้ม, เงินเติม, influencer, ค่าสมาชิก, cashier, branch, และ transaction fact ไม่ใช่โครง CRS catalog code</td><td>จะวาง transaction fields ใกล้ code breakdown แค่ไหน เพื่อให้ทีมเห็นว่าเป็น sales-order data ไม่ใช่ segment ใหม่</td></tr>
         </tbody>
       </table>
 
@@ -647,28 +648,29 @@ CRS-SKN-INI-FIL-RST-001-4CC
       </ul>
 
       <h2 id="next">14 · สถานะ + ขั้นต่อไป (progress)</h2>
-      <p><strong>สถานะล่าสุด</strong> — อัปเดต 2026-06-09:</p>
+      <p><strong>สถานะล่าสุด</strong> — อัปเดต 2026-06-10:</p>
       <table>
         <thead><tr><th>ส่วน</th><th>สถานะ</th><th>ที่</th></tr></thead>
         <tbody>
-          <tr><td>สเปก v3.9 (7-seg, drop checksum, scheme B) + mapper 307/307 + gold</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE origin/main</td></tr>
+          <tr><td>สเปก v3.9 (7-seg, drop checksum, keep SEQ, optional VERSION) + mapper 340/340 + gold</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE origin/main</td></tr>
           <tr><td>LLM-assist scaffold (alias + fuzzy)</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE PR 24</td></tr>
+          <tr><td>D1/D2 transaction boundary: GENCODE เฉพาะ treatment/course/product · JERA เป็น transaction layer วันนี้</td><td><span class="badge existing">locked</span></td><td>YD_GENCODE #44</td></tr>
+          <tr><td>D4 token batch + isActive rule</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE PR 48</td></tr>
           <tr><td>พอร์ตเข้า glyph (engine จริง)</td><td><span class="badge new">PR · รอพี่แอมแป</span></td><td>glyph-oracle PR 340</td></tr>
-          <tr><td>bump CRS-CODE.md → v3.9 + ลบบรรทัด 8-seg/drop-SEQ ที่ขัดกัน</td><td><span class="badge new">issue · เปิด</span></td><td>YD_GENCODE #29</td></tr>
-          <tr><td>WAR subtype (ครอบ skin+surgery+injection)</td><td><span class="badge new">issue · เปิด</span></td><td>glyph #351 · YDG #30</td></tr>
+          <tr><td>WAR subtype (ครอบ skin+surgery+injection)</td><td><span class="badge existing">spec locked · engine/crosswalk ต่อ</span></td><td>glyph #351 · YDG #30</td></tr>
           <tr><td>engine 8→7 migration (drop checksum, keep SEQ) + DB schema/seed</td><td><span class="badge new">issue · รอพี่แอมแป</span></td><td>glyph #350</td></tr>
           <tr><td>SSOT + CI parity gate (gold→engine ทุก PR)</td><td><span class="badge new">issue · รอพี่แอมแป</span></td><td>glyph #349</td></tr>
         </tbody>
       </table>
-      <div class="callout"><strong>SSOT (single source of truth):</strong> สเปก v3.9 = <code>CRS-CODE.md</code> + mapper ที่ทดสอบ 307/307 (gold) = ของจริงอันเดียว. <strong>glyph PR 340</strong> เอา logic นั้นใส่ glyph เป็น module เพิ่ม (307/307 ในglyph จริง) — ไม่แตะ engine เดิม; ส่วน migrate engine 8→7 + schema DB flag ไว้ให้พี่แอมแป (glyph #350). หน้าที่แบ่งกัน: <strong>เรา = สเปก (YD_GENCODE)</strong> · <strong>พี่แอมแป = engine จริง (glyph)</strong></div>
+      <div class="callout"><strong>SSOT (single source of truth):</strong> สเปก v3.9 = <code>CRS-CODE.md</code> + mapper ที่ทดสอบ 340/340 (gold) = ของจริงอันเดียว. <strong>glyph PR 340</strong> เอา logic นั้นใส่ glyph เป็น module เพิ่ม; ส่วน migrate engine 8→7 + schema DB flag ไว้ให้พี่แอมแป (glyph #350). หน้าที่แบ่งกัน: <strong>เรา = สเปก (YD_GENCODE)</strong> · <strong>พี่แอมแป = engine จริง (glyph)</strong></div>
       <p><strong>เหลือ:</strong></p>
       <ul>
-        <li><strong>WAR subtype</strong> — ลงสเปก + engine (glyph #351 / YDG #30) ครอบ skin+surgery+injection</li>
+        <li><strong>WAR subtype</strong> — ต่อ engine + crosswalk รายเคส (glyph #351 / YDG #30) ครอบ skin+surgery+injection</li>
         <li><strong>crosswalk redo บน scheme B v3.9</strong> — warranty/revision + Set ฆ่าเชื้อ + trace ครบทุกแผนก (SKN/VIT/TRT/MSC/SUR), ไม่ใช่แค่ศัลย์ (YDG #30)</li>
-        <li><strong>Ratify registry gaps</strong> — SKB <code>VTRN/DEWV/YCG/MINID</code> · <code>HGL</code> · ACS <code>SUBC/STEM</code> · variant <code>2T/6T/1.5CC</code> · EXT <code>CFAH/TRAM/HDEX</code> (CRS-CODE.md §7 batch)</li>
+        <li><strong>Sales-Order app</strong> — เฟสถัดไปหลัง GENCODE สำหรับ transaction layer ที่ mimic JERA</li>
         <li><strong>glyph: migrate engine 8→7 + scheme B + schema + CI parity gate</strong> (พี่แอมแป — เจ้าของ DB/engine; glyph #349/#350)</li>
         <li><strong>ต่อ LLM จริง</strong> (เติม Anthropic call ใน <code>llmProposer</code>) + UI ให้คนกดยืนยันข้อเสนอ</li>
-        <li><strong>Chrome extension</strong> — แปลงดีไซน์ GENCODE → สร้างแถวจริงใน JERA</li>
+        <li><strong>JERA/Sales-Order bridge</strong> — เฟสถัดไปหลัง GENCODE สำหรับสร้าง transaction จริง</li>
       </ul>
       <div class="nav-footer">
         <span>GENCODE changes guide · v3.9</span>
