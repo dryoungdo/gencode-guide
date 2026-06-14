@@ -114,19 +114,19 @@ body.locked .mobile-toggle{display:none}
       <a href="#uxspec">13 · UX/UI Spec สำหรับ Pym</a>
       <a href="#next">14 · ขั้นต่อไป</a>
     </nav>
-    <div class="sidebar-section" style="margin-top:auto">v3.9 · 2026-06-10</div>
+    <div class="sidebar-section" style="margin-top:auto">v3.10 · 2026-06-14</div>
   </aside>
 
   <main class="reader" id="top">
     <div class="topbar">
       <span class="topbar-title">GENCODE — สรุปการเปลี่ยนแปลง (สำหรับทีม)</span>
-      <span class="topbar-date">2026-06-10</span>
+      <span class="topbar-date">2026-06-14</span>
     </div>
     <div class="content-shell">
       <h1>GENCODE — สรุปการเปลี่ยนแปลง</h1>
       <div class="article-meta">
         เอกสารสำหรับทีม (พี่พิม · พี่แอมแป) · เทียบของเดิม ↔ ของใหม่
-        <span class="tag">v3.9</span><span class="tag">DRAFT</span><span class="tag">รอ Dr.Do รีวิว</span>
+        <span class="tag">v3.10</span><span class="tag">DRAFT</span><span class="tag">รอ Dr.Do รีวิว</span>
       </div>
       <p class="lead">หน้านี้สรุปว่า <strong>ระบบรหัส GENCODE เปลี่ยนอะไรไปบ้าง</strong> จากของเดิม — มีตารางเทียบ <strong>ชื่อไทย / อังกฤษ / รหัส</strong> และแยกชัดว่าอันไหน <span class="badge existing">ของเดิม</span> อันไหน <span class="badge new">เพิ่งเพิ่ม</span></p>
 
@@ -142,7 +142,7 @@ body.locked .mobile-toggle{display:none}
         </tbody>
       </table>
       <p>เพราะ JERA แบนราบ สิ่งที่เป็น <strong>ตัวตนของคอร์ส/สินค้า</strong> อยู่ใน GENCODE ส่วนรายละเอียดการขายอยู่ใน transaction layer แยกออกไป</p>
-      <div class="callout"><strong>ตัดสินใจแล้ว 2026-06-10:</strong> GENCODE = real treatment/course/product only · ราคา / ส่วนลด / ฟรี / แต้ม / เงินเติม / ค่าสมาชิก = transaction layer ไม่เข้ารหัส · transaction layer วันนี้ = JERA · Sales-Order app = เฟสถัดไปหลัง GENCODE</div>
+      <div class="callout"><strong>ตัดสินใจแล้ว 2026-06-14:</strong> GENCODE = real treatment/course/product only · ราคา / ส่วนลด / ฟรี / แต้ม / เงินเติม / ค่าสมาชิก = transaction layer ไม่เข้ารหัส · transaction layer วันนี้ = JERA · Sales-Order app = เฟสถัดไปหลัง GENCODE</div>
       <div class="callout"><strong>Membership:</strong> Privilege Member เป็นสมาชิกจริง (ลงทะเบียนครั้งเดียว 100฿ ใน JERA) → อยู่ชั้น membership/wallet/transaction ไม่ใช่คอร์ส และไม่ mint เป็น CRS</div>
 
       <h2 id="diff">2 · อะไรเปลี่ยนไป (diff จากของเดิม)</h2>
@@ -191,7 +191,7 @@ body.locked .mobile-toggle{display:none}
 
       <h2 id="warranty">4 · WAR — เคสประกัน (subtype ใหม่) <span class="badge new">ใหม่ · lock v3.9</span></h2>
       <p class="lead">ของใหม่ล่าสุด: เพิ่ม <code>WAR</code> เป็น <strong>SUBTYPE ตัวที่ 3</strong> (ช่อง 3) คู่กับ <code>INI</code>/<code>OPT</code> — สำหรับ <strong>เคสแก้ฟรีในช่วงรับประกันหลังผ่าตัด</strong> (warranty revision, ราคา = 0)</p>
-      <div class="callout"><strong>ทำไมต้องมี WAR แยก (ไม่ใช่แค่ตั้งราคา 0):</strong> เดิมหลักการคือ "ในประกัน = แค่ flag ราคา 0 ที่ใบขาย (Sales Order)" — แต่ Captain ตัดสินใจ (2026-06-09) ให้ <strong>encode ที่ระดับรหัส</strong> เพื่อให้ <strong>รายงานเคสประกันได้ราย<u>หมอ</u></strong> (back-office track ต้นทุน: เคสใหม่ vs เคสแก้เก็บเงิน vs เคสแก้ฟรี แยกตามหมอได้ที่ชั้นคอร์สเลย). เป็น <strong>การ override หลักการเดิมโดยตั้งใจ</strong> ยอมให้รหัสเพิ่มจำนวนเพื่อแลกกับรายงานที่ละเอียด</div>
+      <div class="callout"><strong>ทำไมต้องมี WAR แยก (ไม่ใช่แค่ตั้งราคา 0):</strong> เดิมหลักการคือ "ในประกัน = แค่ flag ราคา 0 ที่ใบขาย (Sales Order)" — แต่ Captain ตัดสินใจ (2026-06-14) ให้ <strong>encode ที่ระดับรหัส</strong> เพื่อให้ <strong>รายงานเคสประกันได้ราย<u>หมอ</u></strong> (back-office track ต้นทุน: เคสใหม่ vs เคสแก้เก็บเงิน vs เคสแก้ฟรี แยกตามหมอได้ที่ชั้นคอร์สเลย). เป็น <strong>การ override หลักการเดิมโดยตั้งใจ</strong> ยอมให้รหัสเพิ่มจำนวนเพื่อแลกกับรายงานที่ละเอียด</div>
       <div class="callout"><strong>WAR vs OPT — อย่าสับสน:</strong> <code>WAR</code> = แก้ <strong>ฟรี</strong> ในประกัน (ราคา 0) &nbsp;·&nbsp; <code>OPT</code> = แก้แบบ <strong>เก็บเงิน</strong> (charged revision) ที่ลูกค้าจ่ายเอง. คนละ subtype. ของแก้แบบเก็บเงินทั่วไปยังใช้ OPT เหมือนเดิม เช่น <code>CRS-SUR-OPT-NOSE-REVIS-001-DRGP</code> (แก้จมูกเก็บเงิน)</div>
       <h3>WAR ครอบทุกแผนก (ไม่ใช่แค่ศัลย์)</h3>
       <p>ที่ไหนมีประกัน WAR ใช้ได้หมด — <strong>ศัลยกรรม + สกิน + ฉีด</strong>:</p>
@@ -286,7 +286,7 @@ CRS-SUR-OPT-EYE-LASERREV-001-GEN แก้เลเซอร์ตา        ไ
       <div class="callout"><strong>หมอ = ช่อง 7 (VARIANT) สำหรับศัลย์:</strong> <code>DRDO</code> (โด) · <code>DRGP</code> (กรุ๊ป) · <code>DRBL</code>/<code>DRBALL</code> (บอล) · <code>DRIU</code> (ไอยู) · <code>DRPR</code>/<code>DRPRO</code> (โปร) · <code>DRMY</code> (เมย) · <code>DRPI</code> (พี) · <code>GEN</code> (ยังไม่ระบุหมอ). หมอ <strong>ไม่ดึงจากชื่อหัตถการ</strong> — wizard ถามตอนสร้าง</div>
       <blockquote style="font-size:.85rem"><span class="badge existing">verified</span> หัตถการศัลย์ <strong>74 ตัว</strong> → <strong>0 collision</strong> (<code>SUR-PROCEDURE-MAP.md</code>) · พิสูจน์ด้วย eval-harness 74/74</blockquote>
 
-      <h2 id="set">7 · Set ผ่าตัดฆ่าเชื้อ — เป็น "คอร์ส" (ไม่ใช่ service) <span class="badge new">ใหม่ · 2026-06-10</span></h2>
+      <h2 id="set">7 · Set ผ่าตัดฆ่าเชื้อ — เป็น "คอร์ส" (ไม่ใช่ service) <span class="badge new">ใหม่ · 2026-06-14</span></h2>
       <p class="lead">"ชุด Set ผ่าตัดฆ่าเชื้อ" = <strong>คอร์สที่ขาย/เก็บเงินเอง</strong> (CRS) — เหมือน Set อื่นๆ ที่เป็น <code>CRS-MSC-INI-SET-*</code> อยู่แล้ว ไม่ใช่ service ที่ผูกอยู่ในชื่อคอร์สอื่น</p>
       <div class="callout"><strong>แก้ความเข้าใจเดิม:</strong> ก่อนหน้านี้ GLUEBOY แมป Set ฆ่าเชื้อไว้ผิด — เอาไปอยู่ชั้น service + ฝังในชื่อคอร์ส. ฝน (data partner) ชี้ว่าจริงๆ มันคือ <strong>ของที่ลูกค้าจ่ายเพิ่ม</strong> → ต้องเป็น <strong>CRS (คอร์ส) ของตัวเอง</strong></div>
       <h3>3 เวอร์ชัน (VARIANT แยกสินค้า · ราคาอยู่ transaction)</h3>
@@ -311,7 +311,7 @@ CRS-SUR-OPT-EYE-LASERREV-001-GEN แก้เลเซอร์ตา        ไ
 
       <h2 id="pkg">9 · PKG — แคมเปญ / แพกเกจ / ซับแพกเกจ</h2>
       <p>ชั้นบางๆที่ <strong>อ้างถึง</strong> รหัส CRS (ไม่ใช่ระบบขนาน):</p>
-      <div class="callout"><strong>⚠️ ตำแหน่งของ PKG (Captain เคาะ 2026-06-09):</strong> PKG (แคมเปญ/แพกเกจ) <strong>อยู่ในชั้น Course เป็น "เอกสาร" (documentation)</strong> — เนื้อหา <code>PKG-CODE-DRAFT.md</code> ยุบรวมเข้า <code>CRS-CODE.md</code> ไฟล์เดียว (ลด spec file, ตาม SSOT). <strong>PKG ไม่ใช่ "ช่อง" ในรหัส 7 ช่อง</strong> และ <strong>ไม่ใช่ layer แยกขนาน</strong> — โครงรหัส 7 ช่องไม่เปลี่ยน. แคมเปญที่เป็น bundle จริงยังเข้ารหัสได้ที่ VARIANT (เช่น <code>C2602P1</code>) ตามสเปกเดิม</div>
+      <div class="callout"><strong>⚠️ ตำแหน่งของ PKG (Captain เคาะ 2026-06-14):</strong> PKG (แคมเปญ/แพกเกจ) <strong>อยู่ในชั้น Course เป็น "เอกสาร" (documentation)</strong> — เนื้อหา <code>PKG-CODE-DRAFT.md</code> ยุบรวมเข้า <code>CRS-CODE.md</code> ไฟล์เดียว (ลด spec file, ตาม SSOT). <strong>PKG ไม่ใช่ "ช่อง" ในรหัส 7 ช่อง</strong> และ <strong>ไม่ใช่ layer แยกขนาน</strong> — โครงรหัส 7 ช่องไม่เปลี่ยน. แคมเปญที่เป็น bundle จริงยังเข้ารหัสได้ที่ VARIANT (เช่น <code>C2602P1</code>) ตามสเปกเดิม</div>
       <div class="callout"><strong>⚠️ อย่าสับสน 2 แกน:</strong> <code>INI/OPT</code> = property ของ <em>คอร์ส</em> (หลักเริ่มต้น vs ออพชั่น/ตัวเสริม) &nbsp;·&nbsp; <code>package/subpackage</code> = โครงของ <em>แคมเปญ</em> (ชุดฐาน vs ตัวอัพในชุด) — <strong>คนละแกน ไม่เท่ากัน</strong>. แคมเปญหยิบ "คอร์ส" (ที่เป็น INI หรือ OPT) มาประกอบเป็น package/subpackage</div>
       <pre><code>PKG-{GROUP}-{HOOK}-{C+YYMM}-{SET}          ← แพกเกจหลัก
 PKG-{GROUP}-{HOOK}-{C+YYMM}-{SET}-{UPGRADE} ← ซับแพกเกจ (อัพ)
@@ -648,33 +648,51 @@ CRS-SKN-INI-FIL-RST-001-4CC
       </ul>
 
       <h2 id="next">14 · สถานะ + ขั้นต่อไป (progress)</h2>
-      <p><strong>สถานะล่าสุด</strong> — อัปเดต 2026-06-10:</p>
+      <p><strong>สถานะล่าสุด</strong> — อัปเดต 2026-06-14:</p>
+      <div class="callout"><strong>ภาพรวมสำหรับพี่แนน:</strong> ตอนนี้งานรหัสคอร์ส (CRS) และรหัสบริการที่ส่งมอบจริง (SVC) ปิดความกำกวมหลักแล้ว เหลือให้ระบบสินค้า/สต๊อก (PRD) รองรับ procurement และหลายสาขาแบบไม่ให้แต่ละสาขาออกเลขแตกกันเอง</div>
+
+      <h3>เสร็จแล้วในรอบอัปเดต 2026-06-14</h3>
       <table>
         <thead><tr><th>ส่วน</th><th>สถานะ</th><th>ที่</th></tr></thead>
         <tbody>
-          <tr><td>สเปก v3.9 (7-seg, drop checksum, keep SEQ, optional VERSION) + mapper 340/340 + gold</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE origin/main</td></tr>
+          <tr><td>CRS ratification complete</td><td><span class="badge existing">complete</span> ratify รายการ catalog ที่กำกวม ~292 แถวกับทีมจนเหลือ <strong>0 open questions</strong>; auto name→code mapper green ใน CI</td><td>YD_GENCODE origin/main</td></tr>
+          <tr><td>SVC 7-segment mirror CRS</td><td><span class="badge existing">merged → main</span> <code>SVC-{TYPE}-{SUBTYPE}-{CATEGORY}-{ITEM}-{SEQ}-{VARIANT}</code>; SUBTYPE+SEQ inherit จาก CRS ที่ผูกอยู่ · SVC-eval 36/36</td><td>YD_GENCODE PR 62</td></tr>
+          <tr><td>CI answer key</td><td><span class="badge existing">1,017/1,017</span> gold rows = 112 SUR + 296 skin + 573 PRD + 36 SVC</td><td>YD_GENCODE CI</td></tr>
+          <tr><td>JERA encoding method</td><td><span class="badge existing">confirmed</span> glyph สร้าง surrogate สั้น <code>jera_code</code> เช่น <code>P-0123</code> ลงช่องรหัสของ JERA; GENCODE เต็มอยู่ในช่อง <strong>ชื่อ(en)</strong> และ search ได้</td><td>glyph/JERA integration</td></tr>
+        </tbody>
+      </table>
+      <div class="callout"><strong>กติกา JERA ที่ retire แล้ว:</strong> ไม่ใช้วิธี drop prefix / บีบ GENCODE ให้ไม่เกิน 20 ตัวอักษรอีกต่อไป เพราะช่องรหัสของ JERA ใช้ surrogate สั้น ส่วนรหัสเต็มเก็บใน <strong>ชื่อ(en)</strong></div>
+
+      <h3>ฐานเดิมที่ยังคงเป็นจริง</h3>
+      <table>
+        <thead><tr><th>ส่วน</th><th>สถานะ</th><th>ที่</th></tr></thead>
+        <tbody>
+          <tr><td>สเปก CRS v3.9 (7-seg, drop checksum, keep SEQ, optional VERSION) + mapper/gold</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE origin/main</td></tr>
           <tr><td>LLM-assist scaffold (alias + fuzzy)</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE PR 24</td></tr>
           <tr><td>D1/D2 transaction boundary: GENCODE เฉพาะ treatment/course/product · JERA เป็น transaction layer วันนี้</td><td><span class="badge existing">locked</span></td><td>YD_GENCODE #44</td></tr>
           <tr><td>D4 token batch + isActive rule</td><td><span class="badge existing">merged → main</span></td><td>YD_GENCODE PR 48</td></tr>
-          <tr><td>พอร์ตเข้า glyph (engine จริง)</td><td><span class="badge new">PR · รอพี่แอมแป</span></td><td>glyph-oracle PR 340</td></tr>
           <tr><td>WAR subtype (ครอบ skin+surgery+injection)</td><td><span class="badge existing">spec locked · engine/crosswalk ต่อ</span></td><td>glyph #351 · YDG #30</td></tr>
-          <tr><td>engine 8→7 migration (drop checksum, keep SEQ) + DB schema/seed</td><td><span class="badge new">issue · รอพี่แอมแป</span></td><td>glyph #350</td></tr>
-          <tr><td>SSOT + CI parity gate (gold→engine ทุก PR)</td><td><span class="badge new">issue · รอพี่แอมแป</span></td><td>glyph #349</td></tr>
         </tbody>
       </table>
-      <div class="callout"><strong>SSOT (single source of truth):</strong> สเปก v3.9 = <code>CRS-CODE.md</code> + mapper ที่ทดสอบ 340/340 (gold) = ของจริงอันเดียว. <strong>glyph PR 340</strong> เอา logic นั้นใส่ glyph เป็น module เพิ่ม; ส่วน migrate engine 8→7 + schema DB flag ไว้ให้พี่แอมแป (glyph #350). หน้าที่แบ่งกัน: <strong>เรา = สเปก (YD_GENCODE)</strong> · <strong>พี่แอมแป = engine จริง (glyph)</strong></div>
+      <div class="callout"><strong>SSOT (single source of truth):</strong> สเปก CRS v3.9 + SVC v3.9 + mapper/eval harness ที่ทดสอบ <strong>1,017/1,017</strong> gold rows = ของจริงอันเดียว. หน้าที่แบ่งกันยังเหมือนเดิม: <strong>เรา = สเปกและเฉลยกลาง (YD_GENCODE)</strong> · <strong>พี่แอมแป = engine จริงใน glyph</strong></div>
+
+      <h3>กำลัง design ตอนนี้</h3>
+      <div class="callout"><strong>PRD v4 (product/inventory):</strong> เปลี่ยนเป็นรหัส stable identity — กลุ่มยา/commodity ใช้ substance+strength, ใส่ brand ใน code เฉพาะตอน brand คือ identity ของสินค้า (เช่น filler/silicone). ส่วน supplier · cost · brand-variant · stock รายสาขา เป็น metadata tables (<code>product_supplier</code> + <code>product_branch</code>) ไม่ฝังในรหัส. การ mint code ต้องทำจากส่วนกลาง; สาขา consume codes เท่านั้น เพื่อกันข้อมูลแตกเมื่อ rollout ถึง 100 สาขา และใช้ surrogate JERA แบบเดียวกับข้างบน</div>
+
       <p><strong>เหลือ:</strong></p>
       <ul>
-        <li><strong>WAR subtype</strong> — ต่อ engine + crosswalk รายเคส (glyph #351 / YDG #30) ครอบ skin+surgery+injection</li>
-        <li><strong>crosswalk redo บน scheme B v3.9</strong> — warranty/revision + Set ฆ่าเชื้อ + trace ครบทุกแผนก (SKN/VIT/TRT/MSC/SUR), ไม่ใช่แค่ศัลย์ (YDG #30)</li>
+        <li><strong>PRD v4 spec + migrate product/inventory catalog</strong> — ให้ครอบ procurement และ multi-branch model</li>
+        <li><strong>BOM</strong> — 1 คอร์สใช้สินค้าอะไรบ้าง; design lock 2 แบบ: Fixed = กำหนดล่วงหน้า / Non-fixed = ลงใช้หลังเคสเป็น 0 บาท; build pending</li>
+        <li><strong>PKG layer</strong> — campaign/package layer ใน engine</li>
+        <li><strong>Multi-branch rollout</strong> — รองรับ 100 สาขา: stock/cost/active รายสาขา + central minting</li>
         <li><strong>Sales-Order app</strong> — เฟสถัดไปหลัง GENCODE สำหรับ transaction layer ที่ mimic JERA</li>
-        <li><strong>glyph: migrate engine 8→7 + scheme B + schema + CI parity gate</strong> (พี่แอมแป — เจ้าของ DB/engine; glyph #349/#350)</li>
+        <li><strong>glyph engine</strong> — migrate engine 8→7 + scheme B + schema + wire parser เข้า encode route จริง (พี่แอมแป / P'Amp — DB/engine owner)</li>
         <li><strong>ต่อ LLM จริง</strong> (เติม Anthropic call ใน <code>llmProposer</code>) + UI ให้คนกดยืนยันข้อเสนอ</li>
         <li><strong>JERA/Sales-Order bridge</strong> — เฟสถัดไปหลัง GENCODE สำหรับสร้าง transaction จริง</li>
       </ul>
       <div class="nav-footer">
-        <span>GENCODE changes guide · v3.9</span>
-        <span>🤖 GLUEBOY · 2026-06-09</span>
+        <span>GENCODE changes guide · v3.10</span>
+        <span>🤖 GLUEBOY · 2026-06-14</span>
       </div>
     </div>
   </main>
